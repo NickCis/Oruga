@@ -1,0 +1,14 @@
+<div class="panel-body">
+	<div class="block-nav">
+	</div>
+</div>
+<textarea id="AlbumBrowseListTextArea" style="visibility: hidden; display: none;">
+	{for item in list}
+	<div class="items navigable" data-load='{"kTitle":"${item.album}","kConnector":"cogoteh.song","url":"navigation/song.html","idalbum":${item.id}}'>
+			<div class="head">
+				<img src="images/person-16.png"/>
+			</div>
+			<div class="label">${item.album}</div>
+		</div>
+	{/for}
+</textarea>

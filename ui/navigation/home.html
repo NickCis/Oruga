@@ -1,0 +1,49 @@
+<div class="panel-body">
+	<div class="block-nav">
+		<div class="summary" id="translate-home-summary">
+			<div class="label" style="background: url(&quot;images/kaiten-32.png&quot;) no-repeat;padding-left:35px;"><strong>Cogoteh</strong> player</div>
+			<div class="info">Cogote is a player based on Node.js, Kaiten, and Mpd.</div>
+		</div>
+
+		<form class="quicksearch" onsubmit="return false;">
+			<div class="container rounded-corners">
+				<button title="Search" class="head search" />
+				<input type="text" class="input" placeholder="Search" />
+				<button title="Reset" class="tail reset" onclick="$(this).prev(':input').val('');" />
+			</div>
+		</form>
+
+		<!--div title="New contact" data-load='{"kConnector":"html.page", "url":"sample-navigation/browse.html", "kTitle":"New contact" }' class="items navigable">
+			<div class="head">
+				<img src="sample-navigation/images/add-new-16.png"/>
+			</div>
+			<div class="label">New contact</div>
+			<div class="info"></div>
+			<div class="tail"></div>
+		</div-->
+		<div title="Browse artist" data-load='{"kConnector":"cogoteh.artist", "url":"navigation/artist.html", "kTitle":"Artist" }' class="items navigable">
+			<div class="head">
+				<img src="images/folder-16.png"/>
+			</div>
+			<div class="label">Browse Artist</div>
+			<div class="info"></div>
+			<div class="tail"></div>
+		</div>
+		<div title="Search" data-load='{"kConnector":"html.page", "url":"sample-navigation/browse.html", "kTitle":"Search" }' class="items navigable">
+			<div class="head">
+				<img src="images/search-16.png"/>
+			</div>
+			<div class="label">Search</div>
+			<div class="info"></div>
+			<div class="tail"></div>
+		</div>
+		<div title="Saved filters" data-load='{"kConnector":"html.page", "url":"sample-navigation/browse.html", "kTitle":"Saved filters" }' class="items navigable">
+			<div class="head">
+				<img src="images/search-filter-16.png"/>
+			</div>
+			<div class="label">Saved filters</div>
+			<div class="info"></div>
+			<div class="tail"></div>
+		</div>
+	</div>
+</div>
