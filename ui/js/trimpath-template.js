@@ -116,6 +116,22 @@ var TrimPath;
         "eat"        : function(v)    { return ""; },
         "escape"     : function(s)    { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); },
         "capitalize" : function(s)    { return String(s).toUpperCase(); },
+        "sec2time" : function(s)    { 
+            var hours = parseInt( s / 3600 ) % 24,
+                minutes = parseInt( s / 60 ) % 60,
+                seconds = s % 60;
+            hours = (hours < 10 ? "0" + hours : hours);
+            minutes = (minutes < 10 ? "0" + minutes : minutes);
+            seconds = (seconds  < 10 ? "0" + seconds : seconds);
+            return (s >= 3600 ? hours+':'+minutes+':'+seconds : minutes+':'+seconds);
+        },
+        "obj2str" : function(obj)    { 
+			var str = '{';
+			for (key in obj)
+				str +=  " '"+key+"': "+(typeof(obj[key]) == Number ? String(obj[key]): "'"+String(obj[key])+"'")+",";
+			str += '}';
+			return str;
+		},
         "default"    : function(s, d) { return s != null ? s : d; }
     }
     TrimPath.parseTemplate_etc.modifierDef.h = TrimPath.parseTemplate_etc.modifierDef.escape;

@@ -1,14 +1,25 @@
 <div class="panel-body">
-	<div class="block-nav">
+	<div id="artistList" class="block-nav">
 	</div>
 </div>
 <textarea id="ArtistBrowseListTextArea" style="visibility: hidden; display: none;">
+	<form class='quicksearch' onSubmit='return false'>
+		<div class="container rounded-corners">
+			<button class="head search" title="Search"></button>
+			<input type="text" placeholder="Filter" class="input searchList">
+			<button onclick="$(this).prev(':input').val('');" class="tail reset" title="Reset"></button>
+		</div>
+	</form>
+	<ul class='list'>
 	{for item in list}
-	<div class="items navigable" data-load='{"kTitle":"${item.artist}","kConnector":"cogoteh.album","url":"navigation/album.html","idartist":${item.id}}'>
+		<li>
+		<div class="items navigable" data-load='{"kTitle":"${item.artist}","kConnector":"cogoteh.album","url":"navigation/album.html","idartist":${item.id}}'>
 			<div class="head">
-				<img src="images/person-16.png"/>
+				<img src="${item.img}"/>
 			</div>
 			<div class="label">${item.artist}</div>
 		</div>
+		</li>
 	{/for}
+	</ul>
 </textarea>
