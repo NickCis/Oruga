@@ -1,0 +1,25 @@
+<div class="panel-body">
+	<div id='songList' data-sort='label' class="block-nav">
+	</div>
+</div>
+<textarea id="SongBrowseListTextArea" style="visibility: hidden; display: none;">
+	<form class='quicksearch' onSubmit='return false'>
+		<div class="container rounded-corners">
+			<button class="head search" title="Search"></button>
+			<input type="text" placeholder="Filter" class="input searchList">
+			<button onclick="$(this).prev(':input').val('');" class="tail reset" title="Reset"></button>
+		</div>
+	</form>
+	<ul class='list'>
+	{for item in list}
+	<li>
+	<div class="items clickable" onClick="CogotehPlayer.addSongToPlaylist(${item|obj2str})" >
+			<div class="head">
+				<img src="${item.img}"/>
+			</div>
+			<div class="label">${item.title}</div><div class='info'>${item.album} - ${item.artist} | ${item.time|sec2time}</div>
+		</div>
+		</li>
+	{/for}
+	</ul>
+</textarea>
