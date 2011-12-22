@@ -146,6 +146,10 @@ jKaiten = /**@lends jQuery.ui.kaiten.prototype*/{
 				'<div id="k-breadcrumb"></div>'+
 			'</div>'+
 			'<div id="k-slider"></div>'+
+			'<div id="k-bottombar">'+ //TODO: marca de donde se agrego
+				'<div id="playlist"></div>'+
+				'<div id="player" class="blackback"></div>'+
+			'</div>'+
 		'</div>';
 		$(html).appendTo(this.element);
 		
@@ -1115,7 +1119,7 @@ jKaiten = /**@lends jQuery.ui.kaiten.prototype*/{
 		//console.log('jKaiten._computeDimensions', arguments);
 		this._state.prevWidth = this._state.width; // for breadcrumb layout
 		this._state.width = this.$kWindow.width();
-		this._state.height = this.$kWindow.height() - this._constants.topBarHeight;
+		this._state.height = this.$kWindow.height() - this._constants.topBarHeight - $('#k-bottombar').outerHeight(true); //FIXME: hacerlo en una manera menos cabeza
 
 		/* 1. save columns count for later (expand / reduce strategies - see _doLayout) */
 
@@ -4373,6 +4377,31 @@ jKaiten = /**@lends jQuery.ui.kaiten.prototype*/{
 			});
 			
 			//console.log('options/state', this.options, this._state);
+
+			//Bottom bar things
+			var $player = $('#player'), //FIXME: hacerlo en forma menos cabeza
+				html = 
+					'<div id="player_controls_playback">'+
+						'<button id="player_play_pause" class="buttonsBacks playerControls"></button>'+
+						'<button id="player_previous" class="buttonsBacks playerControls"></button>'+
+						'<button id="player_next" class="buttonsBacks playerControls"></button>'+
+						'<div id="player_times">'+
+							'<span id="player_elapsed">00:00</span> / <span id="player_duration">00:00</span>'+
+						'</div>'+
+					'</div>'+
+					'<div id="player_controls_right">'+
+						'<button id="player_shuffle" class="buttonsBacks playerControls"></button>'+
+						'<button id="player_loop" class="buttonsBacks playerControls"></button>'+
+						'<div id="player_volume_group">'+
+							'<div id="volumeControl" style="display:none;"><div id="volumeSlider"></div></div>'+
+							'<button id="player_volume" class="buttonsBacks playerControls"></button>'+
+						'</div>'+
+
+					'</div>'+
+					'<div id="player_controls_seeking"></div>';
+			$player.html(html);
+			$('#player_controls_seeking', $player).slider();
+			delete $player;
 		},
 		
 		/**
