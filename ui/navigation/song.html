@@ -17,7 +17,8 @@
 			<div class="head">
 				<img src="${item.img}"/>
 			</div>
-			<div class="label">${item.title}</div><div class='info'>${item.album} - ${item.artist} | ${item.time|sec2time}</div>
+			<div class="label">${item.title}</div><div class='info'></div>
+			<div class="desc">${item.album} - ${item.artist}<span style="float: right; margin-right: 4px;">${item.time|sec2time}</span></div>
 		</div>
 		</li>
 	{/for}
