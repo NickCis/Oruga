@@ -440,6 +440,80 @@ button
 #player_volume.muted {
 	background-position: -95px -148px;
 }
+/*Playlist*/
+/*		#playlist			'<div id="playlist_details>'+
+						'<div id="playlist_details_actions"></div>'+
+						'<div id="playlist_details_text></div>'+
+						'<div id="playlist_details_move></div>'+
+					'</div>'+
+					'<div id="playlisy_queue">'+
+						'<div id="queue_list_window">'+
+							'<ol></ol>'+
+						'</div>'+
+						'<div id="queue_list_scrollbar"></div>'
+					'</div>';*/
+#playlist {
+	height: 165px;
+	background: #000;
+}
+#queue_list_window {
+	width: 100%;
+	overflow: hidden;
+}
+#queue_list_window > ol {
+	list-style: none outside none;
+	background: none repeat scroll 0 0 transparent;
+}
+#queue_list_window > ol > li {
+	list-style: none outside none;
+	width: 85px;
+}
+#queue_list_window .queue_item {
+	position: relative;
+}
+#queue_list_window .queue_item .remove_item{
+	position: absolute;
+	top:0;
+	right: 0;
+	display: none;
+	visibility: hidden;
+}
+#queue_list_window .queue_item:hover .remove_item{
+	display: block;
+	visibility: visible;
+}
+#queue_list_window .queue_item .albumart {} /*TODO: */
+#queue_list_window .queue_item .songname {}
+#queue_list_window .queue_item .artistname {}
+
+#playlist_details {
+	position: relative;
+	text-align: center;
+}
+#playlist_details_actions {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+#playlist_details_text {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#playlist_details_move {
+	width: 50px;
+	height: 20px;
+	background-color: red;
+	margin: 0 auto 0 auto;
+	cursor: move;
+	cursor:hand;
+	cursor:grab;
+	cursor:-moz-grab;
+	cursor:-webkit-grab;
+}
+
+
+
 /* BREADCRUMB */
 
 #k-breadcrumb

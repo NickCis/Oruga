@@ -4401,6 +4401,25 @@ jKaiten = /**@lends jQuery.ui.kaiten.prototype*/{
 					'<div id="player_controls_seeking"></div>';
 			$player.html(html);
 			$('#player_controls_seeking', $player).slider();
+			//TODO: volume stuff. Slider/etc
+			delete $player;
+
+			var $playlist = $('#playlist'),
+				html =
+					'<div id="playlist_details">'+
+						'<div id="playlist_details_actions"></div>'+
+						'<div id="playlist_details_text"></div>'+
+						'<div id="playlist_details_move" class="ui-resizable-handle ui-resizable-n"></div>'+
+					'</div>'+
+					'<div id="playlist_queue">'+
+						'<div id="queue_list_window">'+
+							'<ol></ol>'+
+						'</div>'+
+						'<div id="queue_list_scrollbar"></div>'
+					'</div>';
+			$playlist.html(html);
+			$playlist.resizable({'handles':'n'});
+			//TODO: volume stuff. Slider/etc
 			delete $player;
 		},
 		
