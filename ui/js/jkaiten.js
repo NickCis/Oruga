@@ -4406,7 +4406,7 @@ jKaiten = /**@lends jQuery.ui.kaiten.prototype*/{
 
 			var $playlist = $('#playlist'),
 				html =
-					'<div id="playlist_details">'+
+					'<div id="playlist_details" class="blackback">'+
 						'<div id="playlist_details_actions"></div>'+
 						'<div id="playlist_details_text"></div>'+
 						'<div id="playlist_details_move" class="ui-resizable-handle ui-resizable-n"></div>'+
@@ -4418,7 +4418,11 @@ jKaiten = /**@lends jQuery.ui.kaiten.prototype*/{
 						'<div id="queue_list_scrollbar"></div>'
 					'</div>';
 			$playlist.html(html);
-			$playlist.resizable({'handles':'n'});
+			$playlist.resizable({
+				'handles':'n',
+				'minHeight': 30,
+				'maxHeight': 165
+			});
 			//TODO: volume stuff. Slider/etc
 			delete $player;
 		},
