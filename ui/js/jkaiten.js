@@ -4400,7 +4400,7 @@ jKaiten = /**@lends jQuery.ui.kaiten.prototype*/{
 					'</div>'+
 					'<div id="player_controls_seeking"></div>';
 			$player.html(html);
-			$('#player_controls_seeking', $player).slider();
+			$('#player_controls_seeking', $player).slider({'animate': true});
 			//TODO: volume stuff. Slider/etc
 			delete $player;
 
@@ -4413,7 +4413,7 @@ jKaiten = /**@lends jQuery.ui.kaiten.prototype*/{
 					'</div>'+
 					'<div id="playlist_queue">'+
 						'<div id="queue_list_window">'+
-							'<ol></ol>'+
+							'<div></div>'+
 						'</div>'+
 						'<div id="queue_list_scrollbar"></div>'
 					'</div>';
@@ -4423,6 +4423,7 @@ jKaiten = /**@lends jQuery.ui.kaiten.prototype*/{
 				'minHeight': 30,
 				'maxHeight': 165
 			});
+			$("#queue_list_scrollbar").slider({'animate':true, 'max':1});
 			//TODO: volume stuff. Slider/etc
 			delete $player;
 		},

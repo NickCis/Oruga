@@ -160,8 +160,9 @@ var Cogoteh = function() {
 		'pauseClass': 'pause',
 		'shuffleClass': 'active',
 		'loopClass': 'active',
-		'playlistList': ['ol', '#queue_list_window'],
-		'playlistItem': 'li',
+//		'playlistList': ['ol', '#queue_list_window'],
+		'playlistList': ['#queue_list_window > div'],
+		'playlistItem': 'div',
 		'playlistItemClass': 'queue_item'
 	};
 	CogotehUi.prototype._vars = {
@@ -238,7 +239,7 @@ var Cogoteh = function() {
 				'<a class="songname">'+songData.title+'</a>'+
 				'<a class="artistname">'+songData.artist+'</a>'+
 			'</div>'+
-		'</li>';
+		'</'+this._constants['playlistItem']+'>';
 		return html;
 	};
 	CogotehUi.prototype.Songs2Playlist = function(songsData) {
