@@ -455,27 +455,51 @@ button
 					'</div>';*/
 #playlist {
 	height: 165px;
+	overflow: hidden;
 	background: #000;
+}
+#playlist_queue {
+	position: absolute;
+	top: 30px;
+	bottom: 40px;
+	left: 0;
+	right: 0;
 }
 #queue_list_window {
 	width: 100%;
+	height: 100%;
 	overflow: hidden;
 }
 #queue_list_window > ol {
 	list-style: none outside none;
 	background: none repeat scroll 0 0 transparent;
+	width: 100%;
+	height: 100%;
 }
 #queue_list_window > ol > li {
 	list-style: none outside none;
-	width: 85px;
+	float: left;
 }
 #queue_list_window .queue_item {
+	margin: 2px ;
+	overflow: hidden;
+	vertical-align: center;
 	position: relative;
+	max-height: 115px;
+	height: 80%;
+	width: 85px;
+	background-color: #2d2d2d;
+	-webkit-border-radius: 5px;
+	   -moz-border-radius: 5px;
+			border-radius: 5px;
 }
 #queue_list_window .queue_item .remove_item{
 	position: absolute;
 	top:0;
 	right: 0;
+	width: 20px;
+	height: 20px;
+	background-color: blue;
 	display: none;
 	visibility: hidden;
 }
@@ -483,9 +507,34 @@ button
 	display: block;
 	visibility: visible;
 }
-#queue_list_window .queue_item .albumart {} /*TODO: */
-#queue_list_window .queue_item .songname {}
-#queue_list_window .queue_item .artistname {}
+ /*TODO: */
+#queue_list_window .queue_item .albumart {
+	/*max-width: 70px;
+	width: 60%;*/
+	max-height: 70px;
+	height: 70%;
+}
+#queue_list_window .queue_item .albumart img{
+	/*width: 100%;*/
+	height: 90%;
+	max-height: 70px;
+	max-width: 70px;
+	margin: 2px;
+	border: 2px solid #fff;
+	background-color: #000;
+}
+
+#queue_list_window .queue_item .names {}
+#queue_list_window .queue_item .names .songname {
+	display: block;
+	color: #fff;
+	width: 100%;
+}
+#queue_list_window .queue_item .names .artistname {
+	color: #666;
+	width: 100%;
+}
+
 
 #playlist_details {
 	height: 30px;

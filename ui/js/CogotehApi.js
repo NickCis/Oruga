@@ -121,7 +121,26 @@ var Cogoteh = function() {
 	};
 	Cogoteh.prototype.test.getPlaylist = function (cb, data) {
 		cb(this.playlist);
-	}
+	};
+	Cogoteh.prototype.test.getCurrent = function (cb) {
+		if (! this.playlist)
+			this.playlist = [
+				{'id': 0, 'title':'Peron', 'idartist': 0, 'artist': 'Pepe', 'idalbum': 0, 'album': 'Caja', 'genre': '', 'dicnum': 0, 'year':2010, 'tracknum': 4, 'time': 200, 'img': 'images/person-16.png'},
+				{'id': 1, 'title':'Papapa', 'idartist': 0, 'artist': 'Pepe', 'idalbum': 0, 'album': 'Caja', 'genre': '', 'dicnum': 0, 'year':2010, 'tracknum': 4, 'time': 200, 'img': 'images/person-16.png'}
+			];
+		if (! this.elapsed)
+			this.elapsed = 0;
+		this.ret = {
+			'song': {'id': 0, 'title':'Peron', 'idartist': 0, 'artist': 'Pepe', 'idalbum': 0, 'album': 'Caja', 'genre': '', 'dicnum': 0, 'year':2010, 'tracknum': 4, 'time': 200, 'img': 'images/person-16.png'},
+			'playlist': this.playlist,
+			'shuffle': false,
+			'loop': true,
+			'volume':100,
+			'elapsed': this.elapsed++,
+			'playing':true
+		};
+		cb(this.ret);
+	};
 	/*Cogoteh.test.getCurrent
 	Cogoteh.test.play()
 	Cogoteh.test.stop()
@@ -140,7 +159,10 @@ var Cogoteh = function() {
 		'seek': '#player_controls_seeking',
 		'pauseClass': 'pause',
 		'shuffleClass': 'active',
-		'loopClass': 'active'
+		'loopClass': 'active',
+		'playlistList': ['ol', '#queue_list_window'],
+		'playlistItem': 'li',
+		'playlistItemClass': 'queue_item'
 	};
 	CogotehUi.prototype._vars = {
 		'elapsed':0,
@@ -163,7 +185,7 @@ var Cogoteh = function() {
 		return value * time / 100;
 	};
 	CogotehUi.prototype.setSeekValue = function(elapsed, time) {
-		$(cons['seek']).slider('value', this._sliderValue(elapsed, time));
+		$(this._constants['seek']).slider('value', this._sliderValue(elapsed, time));
 	};
 	CogotehUi.prototype.setVolumeData = function(volume) {
 		//TODO: do it!
@@ -188,7 +210,7 @@ var Cogoteh = function() {
 				player.pause();
 		});
 		$(cons['previous']).click(function(ev){
-			player.previous();
+				player.previous();
 		});
 		$(cons['next']).click(function(ev){
 			player.next();
@@ -208,6 +230,25 @@ var Cogoteh = function() {
 			player.setVolume($(cons['volumeSlider']).slider('value'));
 		});
 	};
+	CogotehUi.prototype.song2Playlist = function(number, songData ) {
+		var html = '<'+this._constants['playlistItem']+' data-number="'+number+'" class="'+this._constants['playlistItemClass']+'">';
+		html += '<a class="remove_item" title=""></a>'+ //TODO:deshardcodear class
+			'<div class="albumart"><img src="'+songData.img+'"/></div>'+
+			'<div class="names">'+
+				'<a class="songname">'+songData.title+'</a>'+
+				'<a class="artistname">'+songData.artist+'</a>'+
+			'</div>'+
+		'</li>';
+		return html;
+	};
+	CogotehUi.prototype.Songs2Playlist = function(songsData) {
+		var $playlist = $.apply(null, this._constants['playlistList']),
+			html = '';
+		for (key in songsData)
+			html += this.song2Playlist(key, songsData[key]);
+		$playlist.html(html);
+		delete $playlist;
+	};
 	CogotehUi.prototype.updateData = function() {
 		var that = this,
 			cons = this._constants,
@@ -223,20 +264,22 @@ var Cogoteh = function() {
 				else
 					$(cons[key]).removeClass(cons[key+'Class']);
 			}
-			$(cons['elapsed']).html(that.sec2time(data['elapsed']));
-			this.setSeekValue(data['elapsed'], data['song']['time']);
-			this.setVolumeData(data['volume']);
+			$(cons['elapsed']).html(that.sec2time.apply(that, [data['elapsed']]));
+			that.setSeekValue.apply(that, [data['elapsed'], data['song']['time']]);
+			that.setVolumeData.apply(that, [data['volume']]);
 			var strsong = JSON.stringify(data['song']);
-			if ( strsong != vars['strsong']) {
+			if ( strsong != vars['strsong'] || $(that._constants['duration']).html() == '00:00') {
 				vars['song'] = data['song'];
 				vars['strsong'] = strsong;
+				$(that._constants['duration']).html(that.sec2time.apply(that, [data['song']['time']]));
 				//TODO: update current song info
 			}
 			var strplaylist = JSON.stringify(data['playlist']);
-			if ( strplaylist != vars['strplaylist']) {
+			if ( strplaylist != vars['strplaylist'] || $.apply(null, that._constants['playlistList']).html() == '') {
 				vars['playlist'] = data['playlist'];
 				vars['strplaylist'] = strplaylist;
 				//TODO: update current playlist info
+				that.Songs2Playlist.apply(that, [data['playlist']]);
 			}
 			//update cache data
 			vars['elapsed'] = data['elapsed'];
@@ -249,17 +292,18 @@ var Cogoteh = function() {
 	};
 	CogotehUi.prototype.startIntervals = function(real) {
 		(real) || (real = 2000) ;
-		var fake = 1000;
+		var fake = 1000,
+			that = this;
 		this._vars['fakeUpdteInterval'] = setInterval(function(){
-			this.setSeekValue(this._vars['fakeElapsed']++, this._vars['song']['time'] );
-			$(cons['elapsed']).html(that.sec2time(this._vars['fakeElapsed']));
+			that.setSeekValue.apply(that, [that._vars['fakeElapsed']++, that._vars['song']['time']] );
+			$(that._constants['elapsed']).html(that.sec2time.apply(that, [that._vars['fakeElapsed']]));
 		}, fake);
 		this._vars['realUpdteInterval'] = setInterval(function(){
-			this.updateData();
+			that.updateData.apply(that, []);
 		}, real);
 	};
 	CogotehUi.prototype.clearIntervals = function() {
-		clearInterval(this._vars['fakeUpdateInterval']);
-		clearInterval(this._vars['realUpdateInterval']);
+		clearInterval(that._vars['fakeUpdateInterval']);
+		clearInterval(that._vars['realUpdateInterval']);
 	};
 })();
