@@ -83,9 +83,11 @@ var DatabaseUpdater = function(config) {
 							}
 						});
 						parser.on('done', function(err) {
-							//console.log(thispath, err);
-							if (err) throw err;
-							stream.destroy();
+							if (err) {
+								//throw err;
+								console.log(thispath, type, err);
+							} //else //FIXME: Ver cuando hay qe cerrar stream
+								//stream.destroy();
 						});
 					} else {
 						//console.log('Mime not allowed: %s', type);
@@ -128,7 +130,7 @@ var DatabaseUpdater = function(config) {
 	//Testing purposes
 	var asd = [];
 	var dUp = new DatabaseUpdater({
-		'directory': '/home/nickcis/Music/',
+		'directory': '/tmp/newpc/media/98303FE5303FC8D0/Mi Musica',
 		'dbFunc': function (data, cb) {asd.push(data); cb();},
 		'cbUpdate': function() {
 			//console.log(asd);
