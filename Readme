@@ -1,5 +1,0 @@
-Node.js server. Kaiten Ui. Mpd player.
-
-External Dependecies:
-* mime-magic (must be installed inside node_modules )
-npm install mime-magic

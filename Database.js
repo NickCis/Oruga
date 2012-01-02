@@ -1,6 +1,7 @@
 var fs = require('fs'),
 	path = require('path'),
-	musicmetadata = require('musicmetadata'),
+	//musicmetadata = require('musicmetadata'),
+	TagNode = require('tagnode'),
 	mime = require('mime-magic');
 
 var DatabaseUpdater = function(config) {
@@ -55,12 +56,15 @@ var DatabaseUpdater = function(config) {
 				//Read data
 				//Add to database
 				mime.fileWrapper(thispath, function(err, type){ 
+					console.log(thispath);
 					//TODO: check error
 					//console.log('Mime %s',type);
 					if ( allowedMimes.indexOf(type) != -1) {
-						var stream = fs.createReadStream(thispath),
-							parser = new musicmetadata(stream);
-						parser.on('metadata', function(thismeta) {
+						//var stream = fs.createReadStream(thispath),
+						//	parser = new musicmetadata(stream);
+						var tn = new TagNode.TagNode(thispath);
+						//parser.on('metadata', function(thismeta) {
+						tn.read(function(err, thismeta) {
 							var dataFalt = [];
 							for (var key=0, value=allData[key]; key < allData.length; value=allData[++key]) {
 								switch(value) { //TODO: correct check methods
@@ -82,13 +86,13 @@ var DatabaseUpdater = function(config) {
 								});
 							}
 						});
-						parser.on('done', function(err) {
+						/*parser.on('done', function(err) {
 							if (err) {
 								//throw err;
 								console.log(thispath, type, err);
 							} //else //FIXME: Ver cuando hay qe cerrar stream
 								//stream.destroy();
-						});
+						});*/
 					} else {
 						//console.log('Mime not allowed: %s', type);
 						//console.log('continue...');
@@ -130,7 +134,7 @@ var DatabaseUpdater = function(config) {
 	//Testing purposes
 	var asd = [];
 	var dUp = new DatabaseUpdater({
-		'directory': '/tmp/newpc/media/98303FE5303FC8D0/Mi Musica',
+		'directory': '/home/nickcis/Music',
 		'dbFunc': function (data, cb) {asd.push(data); cb();},
 		'cbUpdate': function() {
 			//console.log(asd);
