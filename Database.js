@@ -132,7 +132,9 @@ var DatabaseUpdater = function(config) {
 
 
 	//Testing purposes
-	var asd = [];
+	var asd = [],
+		tmpTime = 0;
+	setInterval(function() {console.log("Elapsed %d", tmpTime++);}, 1000);
 	var dUp = new DatabaseUpdater({
 		'directory': '/home/nickcis/Music',
 		'dbFunc': function (data, cb) {asd.push(data); cb();},
@@ -142,7 +144,8 @@ var DatabaseUpdater = function(config) {
 				data = asd[i];
 				console.log("Artist: %s Album: %s Title: %s", data.artist, data.album, data.title);
 			}
-			console.log('Number of tracks %s', asd.length);
+			console.log('Elapsed %d - Number of tracks %s - Average(track/time) %d', tmpTime, asd.length, asd.length/tmpTime);
+			process.exit();
 		}
 	});
 	dUp.startUpdate();
