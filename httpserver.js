@@ -23,6 +23,10 @@ OrugaServer.prototype.contentTypeMap = {
 	gif: 'image/gif'
 };
 
+/* start - Starts the http server
+ * @params port : the desire port for the server
+ * @params ip
+ * */
 OrugaServer.prototype.start = function(port, ip) {
 	var that = this,
 		ip = (ip) ? ip : '127.0.0.1',
@@ -75,12 +79,26 @@ OrugaServer.prototype.start = function(port, ip) {
 	}).listen(port, ip);
 	console.log("Server running at http://%s:%d/", ip, port);
 };
+
+/* serverAction - Action of server, process api call o file server
+ * @params params - url data
+ * @params req - request object
+ * @params res - response object
+ * @params userInfo - userInfo dict, (the one stored in the session)
+ * */
 OrugaServer.prototype.serverAction = function(params, req, res, userInfo) {
 	if (params[0].toLowerCase() == 'api')
 		this.apiCall(params, req, res, userInfo);
 	else
 		this.pageCall(params, req, res, userInfo);
 };
+
+/* apiCall - Do an api call
+ * @params params - url data
+ * @params req - request object
+ * @params res - response object
+ * @params userInfo - userInfo dict (the one stored in the session)
+ * */
 OrugaServer.prototype.apiCall = function(params, req, res, userInfo) {
 	var that = this,
 		write = function(code, body, headers) { that.write.call(that, res, code, body, headers);} ;
@@ -112,6 +130,12 @@ OrugaServer.prototype.apiCall = function(params, req, res, userInfo) {
 	}
 };
 
+/* pageCall - Do an page call, file server
+ * @params params - url data
+ * @params req - request object
+ * @params res - response object
+ * @params userInfo - userInfo dict (the one stored in the session)
+ * */
 OrugaServer.prototype.pageCall = function (params, req, res, userInfo) {
 	var that = this,
 		write = function(code, body, headers) { that.write(res, code, body, headers);} ;
@@ -152,6 +176,12 @@ OrugaServer.prototype.pageCall = function (params, req, res, userInfo) {
 	}
 };
 
+/* write - Write header, response and end the connection
+ * @params res - response object
+ * @params code - Http code
+ * @params body - data send
+ * @params headers - A header dict
+ * */
 OrugaServer.prototype.write = function (res, code, body, headers) {
 	if (!headers) headers = {};
 	if (!headers['Content-Type']) headers['Content-Type'] = this.contentTypeMap.txt;
@@ -160,6 +190,10 @@ OrugaServer.prototype.write = function (res, code, body, headers) {
 	res.end(body);
 };
 
+/* parseCookies - parsee the cookies of the current request
+ * @params req - request object
+ * @return dict of the cookies
+ * */
 OrugaServer.prototype.parseCookies = function (req) {
 	var cookies = {};
 	req.headers.cookie && req.headers.cookie.split(';').forEach(function( cookie ) {
@@ -169,6 +203,12 @@ OrugaServer.prototype.parseCookies = function (req) {
 	});
 	return cookies;
 }
+
+/* addSession - creates a session for a user
+ * @params user - username
+ * @params pass - user password
+ * @params data - data to be stored in the session
+ * */
 OrugaServer.prototype.addSession = function (user, pass, data) {
 	var md5 = crypto.createHash('md5'), sha = crypto.createHash('sha1');
 	md5.update(user+Math.random()+pass+Math.random());
@@ -182,6 +222,10 @@ OrugaServer.prototype.addSession = function (user, pass, data) {
 	return sessionKey;
 };
 
+/* getSession - get session stored data
+ * @params sessionKey - a sessionKey
+ * @return the data stored in the session or null
+ * */
 OrugaServer.prototype.getSession = function (sessionKey) {
 	if (! this.sessions[sessionKey])
 		return null;
@@ -195,6 +239,8 @@ OrugaServer.prototype.getSession = function (sessionKey) {
 	return thisSession;
 };
 
+/* sessionCleaner - checks for timeouts
+ * */
 OrugaServer.prototype.sessionCleaner = function () {
 	var thisDate = new Date().getTime()/1000,
 		newSessions = [];
@@ -204,6 +250,8 @@ OrugaServer.prototype.sessionCleaner = function () {
 	});
 	this.sessions = newSessions;
 }
+
+exports.OrugaServer = OrugaServer;
 
 //Testing
 var OS = new OrugaServer();

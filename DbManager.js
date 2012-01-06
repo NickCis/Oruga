@@ -11,7 +11,6 @@ DbManager.prototype.connect = function() {
 	this.conn = new (cradle.Connection).apply(null, arguments);
 };
 
-
 /* querySongs - Get songs & info about them
  * @params query - a dict with all the WHERE, ORDER BY, LIMIT clause
  * @params cb - cb to be called when the query is finished. 2 arguments are passed err, data. Err is the status error, null if any, data is a list with all the songs that matched the coditions. (including album & artist info)
@@ -132,3 +131,6 @@ DbManager.prototype.getConfig = function(cb) {};
  * @param types - Dict of key -> value type of config dict. (If the value type of a specifig option is missing, or the parameter isn't passed, the type will be autodetected)
  * */
 DbManager.prototype.setConfig = function(data, cb, types) {};
+
+//Exporting
+exports.DbManager = DbManager;
