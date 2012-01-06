@@ -18,20 +18,20 @@
 		<script type="text/javascript" src="js/list.min.js">&#160;</script>
 		<script type="text/javascript" src="js/jkaiten.js">&#160;</script>
 		<script type="text/javascript" src="js/jquery.ba-resize.min.js">&#160;</script>
-		<script type="text/javascript" src="js/CogotehApi.js">&#160;</script>
+		<script type="text/javascript" src="js/OrugaApi.js">&#160;</script>
 		<script type="text/javascript" src="js/trimpath-template.js">&#160;</script>
 		<script type="text/javascript">
 			//TODO: mover a main.js
-			var CogotehPlayer = new Cogoteh(),
-				Ui = new CogotehUi(CogotehPlayer);
+			var OrugaPlayer = new Oruga(),
+				Ui = new OrugaUi(OrugaPlayer);
 			(function() {
-			var CogotehConnectorCollection = {
-					'collectionName': 'cogoteh',
+			var OrugaConnectorCollection = {
+					'collectionName': 'oruga',
 					'connectors': [
 						{
 							'name': 'artist',
 							'loader' : function(data, $panel, $kaiten) {
-								CogotehPlayer.getArtist(function(data){
+								OrugaPlayer.getArtist(function(data){
 									(function checkExistance() {
 										var node = $('.panel-body .block-nav', $panel)[0];
 										if (node) {
@@ -54,7 +54,7 @@
 						{
 							'name': 'album',
 							'loader' : function(data, $panel, $kaiten) {
-								CogotehPlayer.getAlbum(function(data){
+								OrugaPlayer.getAlbum(function(data){
 									(function checkExistance() {
 										var node = $('.panel-body .block-nav', $panel)[0];
 										if (node) {
@@ -77,7 +77,7 @@
 						{
 							'name': 'song',
 							'loader' : function(data, $panel, $kaiten) {
-								CogotehPlayer.getSong(function(data){
+								OrugaPlayer.getSong(function(data){
 									(function checkExistance() {
 										var node = $('.panel-body .block-nav', $panel)[0];
 										if (node) {
@@ -100,7 +100,7 @@
 
 					]
 				};
-				jKaiten.registerConnectorsCollection(CogotehConnectorCollection);
+				jKaiten.registerConnectorsCollection(OrugaConnectorCollection);
 			 })();
 
 		</script>
