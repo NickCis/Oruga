@@ -4,11 +4,31 @@ var http = require('http'),
 	fs = require('fs'),
 	crypto = require('crypto'); //For session keys
 
+/* OrugaServer - Create a new instance of OrugaServer, must be run with new!
+ * @params configDict - Config Dictionary:
+ *	{
+ *		rootPath: (string) string of the path to the root of the http (file) server
+ *		checkLogin: (function) function (user, pass, cb(err, data) ) - function that checks if the convination of user password is valid. user is the Username, pass the password of the username, and cb is the callback that has to be called when finishing the check. To the callback to arguments must be passed, err (error, eg. bad login), and data (the data to be stored in the session)
+ *		queryDb: (object) an object with 3 keys: (function) song, (function) album, (function) artist. To these functions 2 arguments are passed, (object) data (a dict with the information to do the WHERE clause) and cb(err, data), the callback (data, is a list of dicts with all de the song/album/artist information)
+ *		player: (object) object to control de player.
+ *	}
+ * @return A OrugaServer instance
+ * The keys of configDict are optional, but the default values of all the functions are dummy functions. Only checkLogin, queryDb and player must be setted! (rootPath havenot to be setted)
+ *
+ * */
 var OrugaServer = function(configDict) {
 	configDict = configDict || {};
 	this.sessions = {};
 	this.rootPath = configDict.rootPath || './ui';
-	this.checkLogin = configDict.configLogin || function(u,p, cb) {cb(undefined, {});};
+	this.checkLogin = configDict.configLogin || function(u,p, cb) {console.warn('checkLogin undefined'); cb(undefined, {});};
+	//queryDb must be an object with 3 functions: song(data, cb), artist(data, cb), album(data, cb). The data argument is a dict with the information to do the WHERE clause in the database query.
+	this.queryDb = configDict.queryDb || {
+		'song': configDict.queryDb.song || function(data, cb) {console.warn('queryDb.song undefined'); cb(undefined, {});},
+		'album': configDict.queryDb.album || function(data, cb) {console.warn('queryDb.album undefined'); cb(undefined, {});},
+		'artist': configDict.queryDb.artist || function(data, cb) {console.warn('queryDb.artist undefined'); cb(undefined, {});}
+	};
+	this.player = configDict.player || {};
+
 };
 
 OrugaServer.prototype.contentTypeMap = {
@@ -24,6 +44,10 @@ OrugaServer.prototype.contentTypeMap = {
 };
 
 /* start - Starts the http server
+ * Connection can be done:
+ *		/login/[user]/[pasword] -> returns sessionKey if connection ok, false if not. (Also creates cookies)
+ *		/credentials/[user]/[password]/action/...  executes the action or returns false if connection error
+ *		/session/[session key]/action/... executes action if session key is valid
  * @params port : the desire port for the server
  * @params ip
  * */
@@ -36,23 +60,33 @@ OrugaServer.prototype.start = function(port, ip) {
 			write = function(code, body, headers) { that.write(res, code, body, headers);} ;
 			userInfo = {},
 			cookies = that.parseCookies(req);
-		params.shift();
-		//TODO check if it is connected;
+		params.shift(); //Take out / of params
 
-		if (params[0].toLowerCase() == 'login') {
+		if (params[0].toLowerCase() == 'login' || params[0].toLowerCase() == 'credentials') {
 			//TODO: Make sth in order to prevent bruteforce
-			var user = params[1],
-				pass = params[2];
+			var paramFirst = params.shift(),
+				user = params.shift(),
+				pass = params.shift();
 			that.checkLogin(user, pass, function(err, data) {
-				if (err) {
+				if (err)
 					write(200, 'false');
-				} else {
+				else {
 					//Credentials ok!
 					var sessionKey = that.addSession.call(that, user, pass, data);
-					write(200, 'true', {
-						'Content-Type': that.contentTypeMap.txt,
-						'Set-Cookie': 'session='+sessionKey+'; Path=/;'
-					});
+					switch(paramFirst) {
+						case 'login':
+							write(200, sessionKey, {
+								'Content-Type': that.contentTypeMap.txt,
+								'Set-Cookie': 'session='+sessionKey+'; Path=/;'
+							});
+							break;
+
+						case 'credentials':
+							var thisSession = that.getSession(sessionKey);
+							if (thisSession)
+								that.serverAction(params, req, res, thisSession);
+							break;
+					}
 				}
 			});
 			return;
@@ -62,13 +96,7 @@ OrugaServer.prototype.start = function(port, ip) {
 			params.shift();
 			cookies['session'] = params.shift();
 		}
-		if (params[0].toLowerCase() == 'credentials') {
-			params.shift();
-			var user = params.shift(),
-				pass = params.shift();
-			//TODO: Login by db 
-			return;
-		}
+
 		var thisSession = that.getSession(cookies['session']);
 		if (thisSession) {
 			that.serverAction(params, req, res, thisSession);
@@ -116,6 +144,10 @@ OrugaServer.prototype.apiCall = function(params, req, res, userInfo) {
 				case 'prev':
 					break;
 				case 'add':
+					break;
+				case 'volume':
+					break;
+				case 'info'
 					break;
 			}
 			console.log('player');

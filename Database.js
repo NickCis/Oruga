@@ -3,7 +3,30 @@ var fs = require('fs'),
 	//musicmetadata = require('musicmetadata'),
 	TagNode = require('tagnode'),
 	mime = require('mime-magic');
-
+/* DatabaseUpdater - create a database updater object
+ * @params config - dictionary with configuration
+ *		{ dbFunc: [function] a function that will add the song to the db, function(data), an argument 'data' is passed to the funcition. Data the following dict:
+ *			{
+ *				tag: has tag info,
+ *				title: song tilte,
+ *				path: path of the song,
+ *				artist: song artist,
+ *				album: song album,
+ *				year: album year,
+ *				comment: song commnent,
+ *				track: song track,
+ *				genre: song genre,
+ *				audioProperties: has audio properties,
+ *				bitrate: song bitrate,
+ *				sample_rate: song sample rate,
+ *				channels: song channles,
+ *				length: song length (in secconds)
+ *			},
+ *			directory: (string or array) paths of the music directory,
+ *			cbUpdate: callback which will be called when the update is finished.
+ *		}
+ *	@return a Database Updater object
+ * */
 var DatabaseUpdater = function(config) {
 	this.dbFunc = config.dbFunc || function(data, cb) {cb();};
 	this.directory = (( config.directory instanceof Array ) ? config.directory : [config.directory]) || null;
@@ -46,11 +69,7 @@ DatabaseUpdater.prototype.parseDirectory = function (pathD, list, cb) {
 		addSong = this.dbFunc;
 
 	//console.log(arguments);
-	if (list == undefined) {
-		cb();
-		return;
-	}
-	if (list.length == 0) {
+	if (list == undefined || list.length == 0) {
 		cb();
 		return;
 	}
@@ -148,7 +167,7 @@ exports.DatabaseUpdater = DatabaseUpdater;
 	setInterval(function() {console.log("Elapsed %d", tmpTime++);}, 1000);
 	var dUp = new DatabaseUpdater({
 		'directory': '/home/nickcis/Music',
-		'dbFunc': function (data, cb) {asd.push(data); cb();},
+		'dbFunc': function (data, cb) {console.log(data); asd.push(data); cb();},
 		'cbUpdate': function() {
 			//console.log(asd);
 			for (var i=0; i<asd.length;i++) {
