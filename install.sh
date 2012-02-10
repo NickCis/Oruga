@@ -14,7 +14,7 @@ echo "    * Installing tagnode"
 wget https://github.com/downloads/NickCis/TagNode/tagnode-1.0.0.tgz
 npm install tagnode-1.0.0.tgz
 
-echo "    * Installion craddle"
-npm install cradle
+echo "    * Installion node-postgres"
+npm install pg
 
 echo "Installation finished"

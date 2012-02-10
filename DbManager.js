@@ -1,14 +1,25 @@
-var cradle = require('cradle');
+var pg = require('pg');
 
+/* DbManager
+ * @params config { 
+	tablePrefix: (string) prefix of tables,
+ * @returns a DbManager object
+ * */
 var DbManager = function(config) {
 	var config = config || {};
 	this.tablePrefix = config.tablePrefix || 'Oruga_';
 	this.conn = null;
-	cradle.setup({}); //TODO: default config is set up this way.
 };
 
-DbManager.prototype.connect = function() {
-	this.conn = new (cradle.Connection).apply(null, arguments);
+DbManager.prototype.connect = function(conString) {
+	this.conn = new pg.Client(conString);
+	this.conn.connect();
+};
+
+DbManager.prototype.__constants = {
+	'songTable': 'songs',
+	'albumTable': 'albums',
+	'artistTable': 'artist'
 };
 
 /* querySongs - Get songs & info about them
