@@ -22,10 +22,11 @@ var OrugaServer = function(configDict) {
 	this.rootPath = configDict.rootPath || './ui';
 	this.checkLogin = configDict.configLogin || function(u,p, cb) {console.warn('checkLogin undefined'); cb(undefined, {});};
 	//queryDb must be an object with 3 functions: song(data, cb), artist(data, cb), album(data, cb). The data argument is a dict with the information to do the WHERE clause in the database query.
+
 	this.queryDb = configDict.queryDb || {
-		'song': configDict.queryDb.song || function(data, cb) {console.warn('queryDb.song undefined'); cb(undefined, {});},
-		'album': configDict.queryDb.album || function(data, cb) {console.warn('queryDb.album undefined'); cb(undefined, {});},
-		'artist': configDict.queryDb.artist || function(data, cb) {console.warn('queryDb.artist undefined'); cb(undefined, {});}
+		'song': function(data, cb) {console.warn('queryDb.song undefined'); cb(undefined, {});},
+		'album': function(data, cb) {console.warn('queryDb.album undefined'); cb(undefined, {});},
+		'artist': function(data, cb) {console.warn('queryDb.artist undefined'); cb(undefined, {});}
 	};
 	this.player = configDict.player || {};
 
@@ -62,7 +63,10 @@ OrugaServer.prototype.start = function(port, ip) {
 			cookies = that.parseCookies(req);
 		params.shift(); //Take out / of params
 
-		if (params[0].toLowerCase() == 'login' || params[0].toLowerCase() == 'credentials') {
+		if (['', 'index.html', 'css', 'js', 'images', 'navigation'].indexOf(params[0].toLowerCase()) != -1) { //All data needed for showing
+			that.pageCall(params, req, res, {});
+			return;
+		} else if (params[0].toLowerCase() == 'login' || params[0].toLowerCase() == 'credentials') {
 			//TODO: Make sth in order to prevent bruteforce
 			var paramFirst = params.shift(),
 				user = params.shift(),
@@ -90,9 +94,7 @@ OrugaServer.prototype.start = function(port, ip) {
 				}
 			});
 			return;
-		}
-
-		if (params[0].toLowerCase() == 'session'){
+		} else if (params[0].toLowerCase() == 'session'){
 			params.shift();
 			cookies['session'] = params.shift();
 		}
@@ -147,13 +149,19 @@ OrugaServer.prototype.apiCall = function(params, req, res, userInfo) {
 					break;
 				case 'volume':
 					break;
-				case 'info'
+				case 'info':
 					break;
 			}
 			console.log('player');
 			break;
 		case 'query':
+			var queryData = (params.length >= 4) ? decodeURIComponent(params[3]) : {};
 			console.log('query');
+			if (['artist','album','song'].indexOf(params[2].toLowerCase()) != -1) {
+				this.queryDb[params[2].toLowerCase()](queryData, function(err, rtaData){
+					write(200, rtaData);
+				});
+			}
 			break;
 
 		default:
@@ -198,7 +206,6 @@ OrugaServer.prototype.pageCall = function (params, req, res, userInfo) {
 						write(400, "unable to read file: "+err+"\n");
 						return;
 					}
-
 					write(200, data, {'Content-Type': that.contentTypeMap[path.extname(pathname).substring(1).toLowerCase()]});
 				});
 			});
