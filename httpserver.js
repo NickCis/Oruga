@@ -10,7 +10,7 @@ var http = require('http'),
  *		rootPath: (string) string of the path to the root of the http (file) server
  *		checkLogin: (function) function (user, pass, cb(err, data) ) - function that checks if the convination of user password is valid. user is the Username, pass the password of the username, and cb is the callback that has to be called when finishing the check. To the callback to arguments must be passed, err (error, eg. bad login), and data (the data to be stored in the session)
  *		queryDb: (object) an object with 3 keys: (function) song, (function) album, (function) artist. To these functions 2 arguments are passed, (object) data (a dict with the information to do the WHERE clause) and cb(err, data), the callback (data, is a list of dicts with all de the song/album/artist information)
- *		player: (object) object to control de player.
+ *		player: (object) object to control de player. All player methods are called in this way function(params, cb(err, data)) params are a list with all the parameters, cb is a callback function, err, error (null / undefined if no error), data, is the data to be printed
  *	}
  * @return A OrugaServer instance
  * The keys of configDict are optional, but the default values of all the functions are dummy functions. Only checkLogin, queryDb and player must be setted! (rootPath havenot to be setted)
@@ -43,6 +43,18 @@ OrugaServer.prototype.contentTypeMap = {
 	tiff: 'image/tiff',
 	gif: 'image/gif'
 };
+
+OrugaServer.prototype.playerMethods = [
+	'play',
+	'stop',
+	'pause',
+	'next',
+	'prev',
+	'add',
+	'volume',
+	'info',
+	'playlist'
+];
 
 /* start - Starts the http server
  * Connection can be done:
@@ -132,33 +144,33 @@ OrugaServer.prototype.serverAction = function(params, req, res, userInfo) {
 OrugaServer.prototype.apiCall = function(params, req, res, userInfo) {
 	var that = this,
 		write = function(code, body, headers) { that.write.call(that, res, code, body, headers);} ;
+	if (!params.length >= 3)  //We need at least params[2]
+		return;
+
+	params[2] = params[2].toLowerCase();
+
 	switch (params[1].toLowerCase() ) {
 		case 'player':
-			switch(params[2].toLowerCase()) { //TODO: integrate player api
-				case 'play':
-					break;
-				case 'stop':
-					break;
-				case 'pause':
-					break;
-				case 'next':
-					break;
-				case 'prev':
-					break;
-				case 'add':
-					break;
-				case 'volume':
-					break;
-				case 'info':
-					break;
+			if (this.playerMethods.indexOf(params[2]) ) {
+				if (! typeof(this.player[params[2]]) == 'function') {
+					console.warn('OrugaServer :: object player has not method \'%s\'', params[2]);
+					return;
+				}
+				this.player[params[2]](params[2].slice(3), function(err, rtaData) {
+					if (err) {
+						console.warn('OrugaServer :: error while running player method \'%s\': \n %s', params[2], err);
+						return;
+					}
+					write(200, rtaData);
+				});
 			}
 			console.log('player');
 			break;
 		case 'query':
-			var queryData = (params.length >= 4) ? decodeURIComponent(params[3]) : {};
+			var queryData = (params.length >= 4) ? JSON.parse(decodeURIComponent(params[3])) : {};
 			console.log('query');
-			if (['artist','album','song'].indexOf(params[2].toLowerCase()) != -1) {
-				this.queryDb[params[2].toLowerCase()](queryData, function(err, rtaData){
+			if (['artist','album','song'].indexOf(params[2])) != -1) {
+				this.queryDb[params[2]](queryData, function(err, rtaData){
 					write(200, rtaData);
 				});
 			}
