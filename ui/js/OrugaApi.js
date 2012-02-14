@@ -77,20 +77,61 @@ var Oruga = function() {
 
 	Oruga.prototype.oruga = {};
 	Oruga.prototype.oruga.query = function(arg, cb, data) {
-		var data = encodeURIComponene(data);
-		$.get('/'+arg+'/'+data, function(datarta) {
+		var cb = cb || function() {};
+		var data = (typeof(data) != 'undefined') ? '/' + encodeURIComponent(data): '';
+		$.get('/' + arg + data, function(datarta) {
 			cb(datarta);
 		});
 	};
 
-	Oruga.prototype.oruga.getArtist = function(cb, artist) {
-		this.query('artist', cb, artist);
+	Oruga.prototype.oruga.play = function(cb) {
+		this.query('player/play', cb);
 	};
-	Oruga.prototype.oruga.getAlbum = function(cb, artist) {
-		this.query('album', cb, artist);
+	Oruga.prototype.oruga.stop = function(cb) {
+		this.query('player/stop', cb);
 	};
-	Oruga.prototype.oruga.getSong = function(cb, artist) {
-		this.query('song', cb, artist);
+	Oruga.prototype.oruga.pause = function(cb) {
+		this.query('player/pause', cb);
+	};
+
+	Oruga.prototype.oruga.getArtist = function(cb, query) {
+		this.query('query/artist', cb, query);
+	};
+	Oruga.prototype.oruga.getAlbum = function(cb, query) {
+		this.query('query/album', cb, query);
+	};
+	Oruga.prototype.oruga.getSong = function(cb, query) {
+		this.query('query/song', cb, query);
+	};
+	Oruga.prototype.oruga.getPlaylist = function (cb, query) {
+		this.query('query/playlist', cb, query);
+	};
+
+	Oruga.prototype.oruga.getCurrent = function (cb) {
+		this.query('player/info',cb);
+	};
+	Oruga.prototype.oruga.setVolume = function(val, cb) {
+		if (val)
+			this.query('player/volume', val, cb);
+	};
+
+	Oruga.prototype.oruga.shuffle = function(cb, val) {
+		this.query('player/shuffle', val, cb);
+	};
+
+	Oruga.prototype.oruga.loop = function(cb, val) {
+		this.query('player/loop', val, cb);
+	};
+
+	Oruga.prototype.oruga.gotoElapsed = function(time, cb) {
+		this.query('player/goto', time, cb);
+	};
+
+	Oruga.prototype.oruga.addSongToPlaylist = function(data, playlistid) {
+		if (! data instaceof Array)
+			data = [data];
+		for (key in data)
+			this.query('player/add', cb, (playlistid) ? data[key]+'/'+playlistid : data[key]);
 	};
 
 

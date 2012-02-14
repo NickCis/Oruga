@@ -45,14 +45,25 @@ OrugaServer.prototype.contentTypeMap = {
 };
 
 OrugaServer.prototype.playerMethods = [
-	'play',
-	'stop',
-	'pause',
-	'next',
-	'prev',
-	'add',
-	'volume',
-	'info',
+//	Method  // http call
+	'play', // /play
+	'stop', // /stop
+	'pause', // /pause
+	'next', // /next
+	'prev', // /prev
+	'add', // /add/SONGID/PLAYLISTID SONGID -> | PLAYLISTID is optional -> add song to specified playlist or current
+	'volume', // /volume/VALUE -> sets volume
+	'info', // /info -> gets basic info of player
+	'playlist', // /playlist -> get current playlist
+	'shuffle', // /shuffle/FLAG FLAG 0: false 1: true FLAG is optional, will toogle.
+	'loop', // /loop/FLAG FLAG 0: false 1: true FLAG is optional, will toogle.
+	'goto' // /goto/TIME TIME: time in seconds
+];
+
+OrugaServer.prototype.queryMethods = [
+	'artist',
+	'album',
+	'song',
 	'playlist'
 ];
 
@@ -169,8 +180,16 @@ OrugaServer.prototype.apiCall = function(params, req, res, userInfo) {
 		case 'query':
 			var queryData = (params.length >= 4) ? JSON.parse(decodeURIComponent(params[3])) : {};
 			console.log('query');
-			if (['artist','album','song'].indexOf(params[2])) != -1) {
+			if (this.queryMethods.indexOf(params[2])) != -1) {
+				if (! typeof(this.queryDb[params[2]]) == 'function') {
+					console.warn('OrugaServer :: object queryDb has not method \'%s\'', params[2]);
+					return;
+				}
 				this.queryDb[params[2]](queryData, function(err, rtaData){
+					if (err) {
+						console.warn('OrugaServer :: error while running queryDb method \'%s\': \n %s', params[2], err);
+						return;
+					}
 					write(200, rtaData);
 				});
 			}
