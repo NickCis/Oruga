@@ -17,4 +17,7 @@ npm install tagnode-1.0.0.tgz
 echo "    * Installion node-postgres"
 npm install pg
 
+echo "    * Installing mdpsocket"
+npm install mpdsocket
+
 echo "Installation finished"

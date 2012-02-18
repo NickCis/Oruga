@@ -1,9 +1,10 @@
-var mpdScoket = require('mpdsocket');
+var mpdSocket = require('mpdsocket');
 
 var MpdPlayer = function(config) {
 	this.config = config || {};
 	this.mpd = null;
 	this.mpdReady = false;
+	this.mpdDoList = [];
 };
 
 
@@ -12,86 +13,93 @@ MpdPlayer.prototype.connect = function(config) {
 	this.port = config.port || 6600;
 	this.ip = config.ip || '127.0.0.1';
 	this.mpd = new mpdSocket(this.ip, this.port);
-	this.mpdDoList = [];
 	if (typeof(config['cb']) != 'function')
 		config['cb'] = function() {};
 	var that = this;
 	this.mpd.on('connect', function() {
 		that.mpdReady = true;
-		config['cb'](null, that.mpd);
-		that.__doActionList.call(that);
+		that.__doActionList(config['cb']);
+//		config['cb'](null, that.mpd);
 	});
 };
-
-MpdPlayer.prototype.__doActionList = function() {
-	var that = this;
-	if (this.mpdDoList.length > 0) {
-		var thisAct = this.mpdDoList.shift();
-		this.mpd.send(thisAct[0], function () {
-			if (typeof(thisAct[1]) == 'function')
-				thisAct[1]();
-			thisAct = null;
-			that.__doActionList.call(that);
-		});
-	}
-};
-
+//REFERENCE: http://mpd.wikia.com/wiki/MusicPlayerDaemonCommands
 MpdPlayer.prototype.__singleVarActions = {
-	'play': 'pause 1',
+	'play': 'play',
 	'stop': 'stop',
-	'pause': 'pause 0',
+	'pause': 'pause',
 	'next': 'next',
 	'prev': 'previous',
 	'playlist': 'playlistinfo',
-	'info': 'currentsong',
+	'songinfo': 'currentsong',
+	'info': 'status',
 	'shuffle': 'random',
 	'loop': 'repeat'
 };
 MpdPlayer.prototype.__2VarActions = {
 	'add': 'add {var}',
 	'volume': 'setvol {var}',
-	'goto': 'seekcur {var}',
+	'goto': 'defined in 3 var',
 	'play': 'playid {var}'
 };
+MpdPlayer.prototype.__3VarActions = {
+	'goto': 'seek {var1} {var2}'
+}
 
+MpdPlayer.prototype.__doActionList = function(cb) {
+	var that = this;
+	if (this.mpdDoList.length > 0) {
+		this.mpd.send(that.mpdDoList[0][0], function () {
+			if (typeof(that.mpdDoList[0][1]) == 'function')
+				that.mpdDoList[0][1].apply(that, arguments);
+			that.mpdDoList.shift();
+			that.__doActionList(cb);
+		});
+	} else if (typeof(cb) == 'function') {
+		console.log('== action list end');
+		cb(null, that.mpd);
+	}
+};
 
-/*
-			'play':,
-			'stop':,
-			'pause':,
-			'next':,
-			'prev':,
-			'add':,
-			'volume':,
-			'info':,
-			'playlist':,
-			'shuffle':,
-			'loop':,
-			'goto':
-			*/
 
 MpdPlayer.prototype.__do = function(cmd, cb) {
 	if (this.mpdReady)
 		this.mpd.send(cmd, cb);
 	else
-		this.mdpDoList.push([cmd,cb]);
+		this.mpdDoList.push([cmd,cb]);
 };
 
 MpdPlayer.prototype.action = function(args, cb) {
-	if (! args instanceof Array)
+	console.log('action');
+	if (! (args instanceof Array))
 		args = [args];
 	if (args.length == 1 ) {
-		if (this.__singleVarActions[arg[0]])
-			this.__do(this.__singleVarActions(arg[0], cb);
+		if (this.__singleVarActions[args[0]])
+			this.__do(this.__singleVarActions[args[0]], cb);
 	} else if (args.length == 2) {
-		if (this.__2VarActions[args[0]])
-			this.__do(this.__2VarActions(args[0].replace('{var}', args[1]), cb);
+		if (this.__2VarActions[args[0]]) {
+			if (args[0] == 'goto') {
+				var that = this;
+				this.__do(this.__singleVarActions['info'], function(r) {
+					that.action(['goto', r['song'], args[1] ], cb);
+				});
+			} else
+				this.__do(this.__2VarActions[args[0]].replace('{var}', args[1]), cb);
+		}
+	} else if (args.length == 3) {
+		if (this.__3VarActions[args[0]])
+			this.__do(this.__3VarActions[args[0]].replace('{var1}', args[1]).replace('{var2}', args[2]), cb);
 	}
 };
 
 exports.MpdPlayer = MpdPlayer;
 
-//Testing
+/*//Testing
 var play = new MpdPlayer();
-play.connect();
-play.action('pause');
+play.connect({
+	'cb': function() {
+		console.log('conectado =D');
+		play.mpd.send('status', function(r) { console.log('pepe'); console.log(r);});
+
+	}
+});
+play.action(['volume', 50], function(r) {console.log(' ========= im cd innn *******'); console.log(r);});*/

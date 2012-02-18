@@ -16,17 +16,21 @@ DbManager.prototype.connect = function(conString) {
 	this.conn.connect();
 };
 
+DbManager.prototype.disconnect = function() {
+	this.conn.end();
+};
+
 DbManager.prototype.__constants = {
-	'songTable': 'songs',
+	'trackTable': 'tracks',
 	'albumTable': 'albums',
-	'artistTable': 'artist'
+	'artistTable': 'artists'
 };
 
 /* querySongs - Get songs & info about them
  * @params query - a dict with all the WHERE, ORDER BY, LIMIT clause
  * @params cb - cb to be called when the query is finished. 2 arguments are passed err, data. Err is the status error, null if any, data is a list with all the songs that matched the coditions. (including album & artist info)
  * */
-DbManager.prototype.querySongs = function(query, cb) {};
+DbManager.prototype.queryTrack = function(query, cb) {};
 
 /* queryAlbum - Get songs & info about them
  * @params query - a dict with all the WHERE, ORDER BY, LIMIT clause
@@ -44,58 +48,143 @@ DbManager.prototype.queryArtists = function(query, cb) {};
  * @params data - a dict with all the info about the song.
  * @params cb - callback(err)
  * */
-DbManager.prototype.addSong = function(data, cb) {};
+DbManager.prototype.addTrack = function(data, cb) {
+	if (!data )
+		cb("data is null");
+	else if (!data['name'] || !data['oid_album'] ||  !data['number'] || !data["path"])
+		cb("data[name] or data[oid_album] or data[number] is null");
+	else {
+		this.conn.query("INSERT INTO tracks(name, number, path, oid_album) VALUES($1, $2, $3, $4) RETURNING oid", [ data['name'], data['number'] , data['path'], data['oid_album']], 
+			function(err, result) { 
+				if(result && result.rows[0] && result.rows[0].oid)
+					cb(err, result.rows[0].oid); 
+				else 
+					cb("no oid return");
+			}
+ 
+		);
+	}
+};
 
 /* addAlbum - Adds an album to the database. Artist addition is also managed by this function. NOTE: you shouldn't use it. Just use addSong, the DbManager will add the album if necesary.
  * @params data - a dict with all the info about the album.
  * @params cb - callback(err)
  * */
-DbManager.prototype.addAlbum = function(data, cb) {};
+DbManager.prototype.addAlbum = function(data, cb) {
+	if (!data )
+		cb("data is null");
+	else if (!data['name'] || !data['oid_artist'])
+		cb("data[name] or data[oid_artist] is null");
+	else {
+		this.conn.query("INSERT INTO albums(name, year, image_path, oid_artist) VALUES($1, $2, $3, $4) RETURNING oid", [ data['name'], data['year'] || '0', data['image_path'], data['oid_artist']], 
+			function(err, result) { 
+				if(result && result.rows[0] && result.rows[0].oid)
+					cb(err, result.rows[0].oid); 
+				else 
+					cb("no oid return");
+			}
+ 
+		);
+	}
+};
 
 /* addArtist - Adds an artist to the database. NOTE: you shouldn't use it. Just use addSong, the DbManager will add the album if necesary.
  * @params data - a dict with all the info about the Artist. Keys
- * @params cb - callback(err)
+ * @params cb - callback(err, oid)
  * */
-DbManager.prototype.addArtist = function(data, cb) {};
-
+DbManager.prototype.addArtist = function(data, cb) {
+	if (!data )
+		cb("data is null");
+	else if (!data['name'] )
+		cb("data[name] is null");
+	else {
+		this.conn.query("INSERT INTO artists(name) VALUES($1) RETURNING oid", [data['name']], 
+			function(err, result) { 
+				if(result && result.rows[0] && result.rows[0].oid)
+					cb(err, result.rows[0].oid); 
+				else 
+					cb("no oid return");
+			}
+ 		);
+	}
+};
+ 
 /* editSong - edit song information
  * @params songid - id of the song
  * @params data - a dict with all the info to be updated / edited
  * @params cb - callback(err)
  * */
-DbManager.prototype.editSong = function(songid, data, cb) {};
+DbManager.prototype.editTrack = function(oid, data, cb) {
+	if (!data )
+		cb("data is null");
+	else if (!data['name'] || !oid )
+		cb("data[name] is null");
+	else
+		this.conn.query("UPDATE tracks SET name=$1 WHERE oid = $2", [data['name'], oid], cb );
+
+};
 
 /* editAlbum - edit song information
  * @params albid - id of the album
  * @params data - a dict with all the info to be updated / edited
  * @params cb - callback(err)
  * */
-DbManager.prototype.editAlbum = function(albgid, data, cb) {};
+DbManager.prototype.editAlbum = function(oid, data, cb) {
+	if (!data )
+		cb("data is null");
+	else if (!data['name'] || !oid )
+		cb("data[name] is null");
+	else
+		this.conn.query("UPDATE albums SET name=$1 WHERE oid = $2", [data['name'], oid], cb );
+
+};
 
 /* editArtist - edit artist information
  * @params artgid - id of the art
  * @params data - a dict with all the info to be updated / edited
  * @params cb - callback(err)
  * */
-DbManager.prototype.editArtist = function(artid, data, cb) {};
+DbManager.prototype.editArtist = function(oid, data, cb) {
+	if (!data )
+		cb("data is null");
+	else if (!data['name'] || !oid )
+		cb("data[name] is null");
+	else
+		this.conn.query("UPDATE artists SET name=$1 WHERE oid = $2", [data['name'], oid], cb );
+};
 
 /* eraseSong - erase song. NOTE: this function DOESN'T clean the database for empty albums or artists.
  * @params songif - id of the song
  * @params cb - callback(err)
  * */
-DbManager.prototype.eraseSong = function(songid, cb) {};
+DbManager.prototype.eraseTrack = function(oid, cb) {
+	if (!oid )
+		cb("oid is null");
+	else
+		this.conn.query("DELETE FROM tracks WHERE oid = $1", [oid], cb );
+};
 
 /* eraseAlbum - erase Album. NOTE: this function DOESN'T clean the database for empty songs or artists.
  * @params albgif - id of the album
  * @params cb - callback(err)
  * */
-DbManager.prototype.eraseAlbum = function(albid, cb) {};
+DbManager.prototype.eraseAlbum = function(oid, cb) {
+	if (!oid )
+		cb("oid is null");
+	else
+		this.conn.query("DELETE FROM albums WHERE oid = $1", [oid], cb );
+};
 
 /* eraseArtist - erase Artist. NOTE: this function DOESN'T clean the database for empty albums or songs.
  * @params artif - id of the artist
  * @params cb - callback(err)
  * */
-DbManager.prototype.eraseArtist = function(artid, cb) {};
+DbManager.prototype.eraseArtist = function(artid, cb) {
+	if (!oid )
+		cb("oid is null");
+	else
+		this.conn.query("DELETE FROM artists WHERE oid = $1", [oid], cb );
+};
 
 /* validateCredentials - Validate user pass
  * @params user - username
@@ -145,3 +234,16 @@ DbManager.prototype.setConfig = function(data, cb, types) {};
 
 //Exporting
 exports.DbManager = DbManager;
+
+
+var test = new DbManager();
+test.connect("tcp://admin:admin@127.0.0.1/oruga");
+
+var artist = {
+	'name': "seba capo"
+};
+test.addArtist( {'name': 'seba'}, function(err, result) { console.log("query ok " + err + "  " + result); } );
+
+
+//test.disconnect();
+
