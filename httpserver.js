@@ -180,7 +180,7 @@ OrugaServer.prototype.apiCall = function(params, req, res, userInfo) {
 		case 'query':
 			var queryData = (params.length >= 4) ? JSON.parse(decodeURIComponent(params[3])) : {};
 			console.log('query');
-			if (this.queryMethods.indexOf(params[2])) != -1) {
+			if (this.queryMethods.indexOf(params[2]) != -1) {
 				if (! typeof(this.queryDb[params[2]]) == 'function') {
 					console.warn('OrugaServer :: object queryDb has not method \'%s\'', params[2]);
 					return;
@@ -324,5 +324,5 @@ OrugaServer.prototype.sessionCleaner = function () {
 exports.OrugaServer = OrugaServer;
 
 //Testing
-var OS = new OrugaServer();
-OS.start();
+//var OS = new OrugaServer();
+//OS.start();
