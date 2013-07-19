@@ -1,12 +1,12 @@
-var Oruga = function() {
+function Oruga() {
 	this.player = 'test';
-},
-	OrugaUi = function(player) {
-		this.player = player;
-		this.doBinds();
-		this.updateData();
-		this.startIntervals();
-	};
+}
+function OrugaUi (player) {
+	this.player = player;
+	this.doBinds();
+	this.updateData();
+	this.startIntervals();
+}
 
 (function () {
 	Oruga.prototype.setPlayer = function (player) {
@@ -128,7 +128,7 @@ var Oruga = function() {
 	};
 
 	Oruga.prototype.oruga.addSongToPlaylist = function(data, playlistid) {
-		if (! data instaceof Array)
+		if (! data instanceof Array)
 			data = [data];
 		for (key in data)
 			this.query('player/add', cb, (playlistid) ? data[key]+'/'+playlistid : data[key]);
