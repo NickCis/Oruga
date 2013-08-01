@@ -1,0 +1,198 @@
+#!/usr/bin/perl
+
+use strict;
+use TWS::Common::Events;
+use TWS::Common::Daemon;
+use CGI;
+use DBI;
+use Objdb::CVR;
+use Config::IniFiles ();
+use POSIX qw(strftime);
+use Data::Dumper;
+#use CGI::App::Config;
+use JSON;
+
+my %EVENTS;
+my $dbh;
+
+$EVENTS{"getSongs"} = \&db_get_songs;
+$EVENTS{"getAlbums"} = \&db_get_albums;
+$EVENTS{"getArtists"} = \&db_get_artists;
+
+# Signal handling
+$SIG{TERM} = $SIG{QUIT} = $SIG{INT}  = \&STOP;
+$SIG{CHLD} = \&handle_signal_child;
+$SIG{__DIE__} = sub {
+	TWS::Common::Daemon::Log("warning", @_);
+	STOP();
+};
+
+if(START() != 0) {
+	TWS::Common::Daemon::Log("error", "START fallo");
+	exit 1;
+}
+
+while(<STDIN>) {
+	my $event;
+	$event = parse_msg($_);
+	if(!$event) {
+		print STDERR "ERROR de mensaje\n";
+		print STDOUT "-1\n";
+		next;
+	}
+	if($EVENTS{$event->{"event"}}) {
+		my $ret; 
+		$ret = $EVENTS{$event->{"event"}}($event->{"params"});
+		if($ret == -1) {
+			print STDERR "Evento $event->{event} fallo\n";
+			print STDOUT "-1\n";
+			next;
+		}
+		my $response;
+		$response->{'reponse'} = $ret;
+		$response->{'id'} = $event->{'id'};
+		
+		print STDOUT encode_json($response);
+		print STDOUT "\n";
+		next;
+
+	} else {
+		print STDERR "Evento $event->{event} inexistente\n";
+		print STDOUT "-1\n";
+		next;
+	}
+#TWS::Common::Daemon::Log("error", "main - check_folder_to_import");
+
+	sleep(1);
+} 
+
+STOP();
+
+sub START 
+{
+	$dbh = DBI->connect('dbi:mysql:oruga:localhost', 'root', 'oruga') || die $DBI::errstr;
+#	TWS::Common::Daemon::Start("hotfolderd");
+
+	return 0;        
+}
+
+sub STOP 
+{
+	my $signal = shift;
+	$dbh->disconnect;
+
+	TWS::Common::Daemon::Log("warning", "STOP by signal $signal");
+	exit(0);
+#	TWS::Common::Daemon::Stop();
+}
+
+sub parse_msg
+{
+	my $msg = shift;
+
+	if(!$msg) {
+		return undef;
+	}
+	my $ret = $msg =~ /^(\d+):([a-zA-Z_-]+):(\S+)$/;
+	if(!$ret) {
+		return undef;
+	}
+
+	my $data;
+	$data->{'id'} = $1;
+	$data->{'event'} = $2;
+	
+	my $q = new CGI($3);
+	if(!$q) {
+		return undef;
+	}
+	$data->{'params'} = $q;
+
+	return $data;
+}
+
+
+sub db_get_songs
+{
+	my $params = shift;
+
+	my $obj = new Objdb::CVR::Songs();
+	$obj->db($dbh);
+	$obj->enableTables(["album"]);
+	$obj->join("album")->enableTables(["artist"]);
+
+	my $where = "1";
+	$where .= " AND songs.id = ".$params->{'param'}->{'idSong'}->[0] if($params->{'param'}->{'idSong'});
+	$where .= " AND songs.idalbum = ".$params->{'param'}->{'idAlbum'}->[0] if($params->{'param'}->{'idAlbum'});
+	$where .= " AND songs.name like '%".$params->{'param'}->{'wordSong'}->[0]."%'" if($params->{'param'}->{'wordSong'});
+	$where .= " AND songsalbum.idartist = ".$params->{'param'}->{'idArtist'}->[0] if($params->{'param'}->{'idArtist'});
+	$where .= " AND songsalbum.name like '%".$params->{'param'}->{'wordAlbum'}->[0]."%'" if($params->{'param'}->{'wordAlbum'});
+	$where .= " AND songsalbumartist.name like '%".$params->{'param'}->{'wordArtist'}->[0]."%'" if($params->{'param'}->{'wordArtist'});
+	
+	$obj->where($where);
+	$obj->limit_from(($params->{'param'}->{'limitFrom'}->[0]  > 0) ? $params->{'param'}->{'limitFrom'}->[0] : 0);
+	$obj->limit_count(($params->{'param'}->{'limitCount'}->[0] > 0) ? $params->{'param'}->{'limitCount'}->[0] : 10);
+	$obj->order_by(($params->{'param'}->{'orderBy'}->[0] > 0) ? $params->{'param'}->{'orderBy'}->[0] : "songs.name ASC");
+
+	my $result = $obj->fetchall();
+	if($obj->error) {
+		print STDERR "query error: $obj->{_log}\n";
+		return -1;
+	}
+
+	return $result;
+}
+
+
+sub db_get_albums
+{
+	my $params = shift;
+
+	my $obj = new Objdb::CVR::Albums();
+	$obj->db($dbh);
+	$obj->enableTables(["artist"]);
+
+	my $where = "1";
+	$where .= " AND albums.id = ".$params->{'param'}->{'idAlbum'}->[0] if($params->{'param'}->{'idAlbum'});
+	$where .= " AND albums.idartist = ".$params->{'param'}->{'idArtist'}->[0] if($params->{'param'}->{'idArtist'});
+	$where .= " AND albums.name like '%".$params->{'param'}->{'wordAlbum'}->[0]."%'" if($params->{'param'}->{'wordAlbum'});
+	$where .= " AND albumsartist.name like '%".$params->{'param'}->{'wordArtist'}->[0]."%'" if($params->{'param'}->{'wordArtist'});
+	
+	$obj->where($where);
+	$obj->limit_from(($params->{'param'}->{'limitFrom'}->[0]  > 0) ? $params->{'param'}->{'limitFrom'}->[0] : 0);
+	$obj->limit_count(($params->{'param'}->{'limitCount'}->[0] > 0) ? $params->{'param'}->{'limitCount'}->[0] : 10);
+	$obj->order_by(($params->{'param'}->{'orderBy'}->[0] > 0) ? $params->{'param'}->{'orderBy'}->[0] : "albums.name ASC");
+
+	my $result = $obj->fetchall();
+	if($obj->error) {
+		print STDERR "query error: $obj->{_log}\n";
+		return -1;
+	}
+
+	return $result;
+}
+
+sub db_get_artists
+{
+	my $params = shift;
+
+	my $obj = new Objdb::CVR::Artists();
+	$obj->db($dbh);
+
+	my $where = "1";
+	$where .= " AND artists.id = ".$params->{'param'}->{'idArtist'}->[0] if($params->{'param'}->{'idArtist'});
+	$where .= " AND artists.name like '%".$params->{'param'}->{'wordArtist'}->[0]."%'" if($params->{'param'}->{'wordArtist'});
+	
+	$obj->where($where);
+	$obj->limit_from(($params->{'param'}->{'limitFrom'}->[0]  > 0) ? $params->{'param'}->{'limitFrom'}->[0] : 0);
+	$obj->limit_count(($params->{'param'}->{'limitCount'}->[0] > 0) ? $params->{'param'}->{'limitCount'}->[0] : 10);
+	$obj->order_by(($params->{'param'}->{'orderBy'}->[0] > 0) ? $params->{'param'}->{'orderBy'}->[0] : "artists.name ASC");
+
+	my $result = $obj->fetchall();
+	if($obj->error) {
+		print STDERR "query error: $obj->{_log}\n";
+		return -1;
+	}
+
+	return $result;
+}
