@@ -33,7 +33,7 @@ void poner_hilo(Hilos *h);
 void limpiar_hilos(void);
 
 void loggear(char *fmt, ...);
-void responder(int id, char *fmt, ...);
+void responder(int id, int error, char *error_text, char *fmt, ...);
 
 void *indexar(void *hilo);
 
