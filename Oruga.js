@@ -1,0 +1,1 @@
+var PluginManager = require('./PluginManager');

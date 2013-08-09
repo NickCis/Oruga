@@ -1,0 +1,83 @@
+var ChildProcess = require('child_process'),
+	EventEmitter = require('events').EventEmitter,
+	util = require('util');
+
+function PluginManager(bin, args, config){
+	if(arguments.length == 2){
+		config = args;
+		args = undefined;
+	}
+	this.bin = bin;
+	this.args = args || [];
+	this.c = config || {};
+	this.count = 0;
+	this.cbs = {};
+}
+
+PluginManager.prototype.spawnArgs = [
+	'cwd',
+	'stdio',
+	'env',
+	'detached',
+	'uid',
+	'gid'
+].slice(0);
+
+PluginManager.prototype.run = function(){
+	var opts = { //Default
+		cwd: undefined,
+		env: process.env
+	};
+
+	for(var i=0, k; k=this.spawnArgs[i]; i++)
+		if(this.c.hasOwnProperty(k))
+			opts[k] = this.c[k];
+
+	this.inst = ChildProcess.spawn(this.bin, this.args, opts);
+
+	this.inst.stdout.on('data', this._readStdOut.bind(this));
+	this.inst.stderr.on('data', this._readStdErr.bind(this));
+	this.inst.on('close', this._hasDied.bind(this));
+};
+
+PluginManager.prototype._readStdOut = function(data){
+	var Json = {
+		id: 0
+	};
+	try{
+		Json = JSON.parse(data);
+	}catch(e){
+		console.err('PluginManager: error al parsear rta');
+	}
+
+	var cb = this.cbs[Json.id];
+	if(cb){
+		if(typeof(cb) == 'function'){
+			cb(Json.error || 0, Json);
+		}
+		delete this.cbs[Json.id];
+	}
+
+	this.emit('message', Json.error || 0, Json.id || 0, Json);
+};
+
+PluginManager.prototype._readStdErr = function(data){
+};
+
+PluginManager.prototype._hasDied = function(code){
+	console.log("Mori con codigo: "+code);
+	if(code != 0)
+		this.run();
+};
+
+PluginManager.prototype.sendMessage = function(event, data, cb){
+	var id = (this.count++),
+		message = ""+id+":"+event+":"+data+"\n";
+	this.inst.stdin.write(message);
+	(typeof(cb) == "function") && (this.cbs[id] = cb);
+};
+
+
+
+util.inherits(PluginManager, EventEmitter);
+module.exports = PluginManager;
