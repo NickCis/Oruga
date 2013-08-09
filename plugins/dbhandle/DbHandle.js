@@ -1,8 +1,11 @@
-var PluginManager = require('PluginManager');
+var PluginManager = require('PluginManager'),
+	util = require('util');
+
+util.inherits(DbHandle, PluginManager);
+
 function DbHandle(config) {
-	PluginManager.call(this, [], config);
+	PluginManager.call(this, '/root/sandbox/Oruga/plugins/dbhandle/dbhandled', [], config);
 }
 
 
-util.inherits(DbHandle, PluginManager);
 module.exports = DbHandle;
