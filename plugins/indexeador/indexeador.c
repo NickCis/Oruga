@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 		e = evento;
 		if(!c){
 			loggear("No se puede parsear el evento %s", evento);
-			responder(-1,"-1");
+			responder(-1, -1, "No se pudo parsear el evento", "{}");
 			continue;
 		}
 		*c = 0;
@@ -63,32 +63,32 @@ int main(int argc, char **argv)
 		c = strchr(e, ':');
 		if(!c){
 			loggear("No se puede parsear el evento %s", evento);
-			responder(id, "-1");
+			responder(id, -1, "No se pudo parsear el evento", "{}");
 			continue;
 		}
 		*c = 0;
 		if(!strcmp(e, "exit")){
 			loggear("Se me pidio salir");
-			responder(id, "0");
+			responder(id, 0, "Saliendo", "{}");
 			break;
 		}
 		else if(!strcmp(e, "indexar")){
 			if(cola_hilos.cantidad >= MAXTHREADS){
 				loggear("Hay muchos hilos ejecutandose");
-				responder(id, "-1");
+				responder(id, -1, "Muchos hilos en ejecucion", "{}");
 				continue;
 			}
 			e = c + 1;
 			c = strchr(e, '=');
 			if(!c){
 				loggear("No se pudo parsear %s", e);
-				responder(id, "-1");
+				responder(id, -1, "No se pudo parsear el evento", "{}");
 				continue;
 			}
 			*c = 0;
 			if(strcmp(e, "carpeta")){
 				loggear("Se requiere del argumento carpeta, vino %s", e);
-				responder(id, "-1");
+				responder(id, -1, "Se requiere del argumento 'carpeta'", "{}");
 				continue;
 			}
 			strncpy(dir, c + 1, MAXDIRLEN);
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 		}
 		else{
 			loggear("No se reconoce el evento %s", e);
-			responder(id, "-1");
+			responder(id, -1, "No se reconoce el evento", "{}");
 		}
 	}
 
@@ -122,7 +122,7 @@ void *indexar(void *hilo_)
 	//TODO indexar
 	sleep(10);
 	loggear("Saliendo id %d", hilo->data.id);
-	responder(hilo->data.id, "0");
+	responder(hilo->data.id, 0, "Indexado completo", "{}"); //TODO agregar mas informacion, como cantidad de nuevas canciones
 	return 0;
 }
 
@@ -225,12 +225,17 @@ void loggear(char *fmt, ...)
 	va_end(ap);
 }
 
-void responder(int id, char *fmt, ...)
+void responder(int id, int error, char *error_text, char *fmt, ...)
 {
 	va_list ap;
 	char texto[300];
+	if(!error_text)
+		error_text = "";
+	if(!fmt){
+		fmt = "{}";
+	}
 	va_start(ap, fmt);
-	sprintf(texto, "%d:%s\n", id, fmt);
+	sprintf(texto, "{\"id\": %d, \"response\": %s, \"error\": %d, \"error_text\": \"%s\"}\n", id, fmt, error, error_text);
 	vprintf(texto, ap);
 	va_end(ap);
 }
