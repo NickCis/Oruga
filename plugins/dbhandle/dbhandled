@@ -35,32 +35,38 @@ if(START() != 0) {
 while(<STDIN>) {
 	my $event;
 	$event = parse_msg($_);
-	if(!$event) {
-		print STDERR "ERROR de mensaje\n";
-		print STDOUT "-1\n";
-		next;
-	}
-	if($EVENTS{$event->{"event"}}) {
-		my $ret; 
-		$ret = $EVENTS{$event->{"event"}}($event->{"params"});
-		if($ret == -1) {
-			print STDERR "Evento $event->{event} fallo\n";
-			print STDOUT "-1\n";
-			next;
-		}
-		my $response;
-		$response->{'reponse'} = $ret;
-		$response->{'id'} = $event->{'id'};
-		
-		print STDOUT encode_json($response);
-		print STDOUT "\n";
-		next;
+	my $response;
+	$response->{'error'} = 0;
+	$response->{'error_text'} = "";
+	$response->{'reponse'} = "";
+	$response->{'id'} = "";
 
+	if(!$event) {
+		$response->{'error'} = -2;
+		$response->{'error_text'} = "Fallo la peticion";
+		print STDERR "ERROR de mensaje\n";
 	} else {
-		print STDERR "Evento $event->{event} inexistente\n";
-		print STDOUT "-1\n";
-		next;
+		$response->{'id'} = $event->{'id'};
+		if($EVENTS{$event->{"event"}}) {
+			my $ret = $EVENTS{$event->{"event"}}($event->{"params"});
+			if($ret == -1) {
+				$response->{'error'} = -1;
+				$response->{'error_text'} = "Fallo la peticion";
+				print STDERR "Evento $event->{event} fallo\n";
+			} else {
+				$response->{'reponse'} = $ret;
+			}
+		} else {
+			$response->{'error_text'} = "Evento $event->{event} inexistente\n";
+			$response->{'error'} = -3;
+		}
 	}
+	
+	print STDOUT encode_json($response);
+	print STDOUT "\n";
+	
+
+
 #TWS::Common::Daemon::Log("error", "main - check_folder_to_import");
 
 	sleep(1);
