@@ -1,10 +1,3 @@
-Node.js server. Kaiten Ui. Mpd player.
+== Long live to Oruga ==
 
-External Dependecies:
-
-* mime-magic (must be installed inside node\_modules )
-    npm install mime-magic
-
-* tagnode (must be installed inside node\_modules)
-    wget https://github.com/downloads/NickCis/TagNode/tagnode-1.0.0.tgz
-    npm install tagnode-1.0.0.tgz
+Musica centralizada via web
