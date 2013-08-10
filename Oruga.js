@@ -1,17 +1,16 @@
-var DbHandle = require('./plugins/dbhandle/DbHandle'),
-	db = new DbHandle();
+var dummy = require('./plugins/dummy/dummy.js'),
+	d = new dummy();
 
+d.run();
 
-db.run();
-
-db.sendMessage("asdasd", "asdasd", function(error, Json){
-	console.log('mensaje 1');
-	console.log("Error: "+error);
+d.sendMessage("asdasd", "asdasd", function(error, Json){
+	console.log('Mensaje 1');
+	console.log("\tError: "+error);
 	console.log(Json);
 });
 
-db.sendMessage("bbbbbbbbbbbbb", "asdasd", function(error, Json){
-	console.log('mensaje 2');
-	console.log("Error: "+error);
+d.sendMessage("bbbbbbbbbbbbb", "a=1&b=2", function(error, Json){
+	console.log('Mensaje 2');
+	console.log("\tError: "+error);
 	console.log(Json);
 });
