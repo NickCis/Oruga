@@ -2,7 +2,7 @@
 import json
 import urlparse
 import time
-import sys
+#import sys
 
 while 1:
     input = raw_input()
@@ -20,4 +20,4 @@ while 1:
         ret[key] = value
 
     print json.dumps(ret)
-    sys.stdout.flush()
+    #sys.stdout.flush()
