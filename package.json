@@ -9,7 +9,8 @@
 			"name": "ncisco",
 			"github": "nickcis"
 		},{
-			"name": "ndato"
+			"name": "nicodato",
+			"github": "nicodato"
 		},{
 			"name": "nsuja"
 		}
@@ -25,10 +26,12 @@
 		"url": "https://github.com/NickCis/Oruga"
 	},
 	"dependencies": {
-		"OrugaServer": "x"
+		"OrugaServer": "x",
+		"orugaIndexeador": "x"
 	},
 	"bundledDependecies": [
-		"OrugaServer
+		"OrugaServer",
+		"orugaIndexeador"
 	],
 	"license": "Hay que verla"
 }
