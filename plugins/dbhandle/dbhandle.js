@@ -1,4 +1,4 @@
-var PluginManager = require('PluginManager'),
+var PluginManager = require('OrugaServer').PluginManager,
 	util = require('util');
 
 function dbhandle(config) {
