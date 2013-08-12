@@ -3,3 +3,4 @@
 plugins/indexeador/indexeador
 .*.sw*
 
+node_modules
