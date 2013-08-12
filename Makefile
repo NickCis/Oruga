@@ -1,9 +1,11 @@
 NPM=npm
 RM=rm
 
-.PHONY: all clean run
+.PHONY: all run install clean
 
-all:
+all: install run
+
+install:
 	$(NPM) install
 
 run:
