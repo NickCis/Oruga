@@ -1,18 +1,15 @@
 {
-	"name": "orugaIndexeador",
+	"name": "oruga_indexeador",
 	"description": "Indexeador para el oruga",
 	"version": "1.0.0",
 	"author": "nicodato https://github.com/nicodato/",
 	"bin": {
-		"orugaIndexeador": "indexeador"
+		"oruga_indexeador": "indexeador"
 	},
 	"main": "./indexeador.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/NickCis/Oruga"
-	},
-	"dependencies": {
-		"OrugaServer": "x"
 	},
 	"scripts": {
 		"preinstall": "make clean all"

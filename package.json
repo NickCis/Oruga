@@ -1,5 +1,5 @@
 {
-	"name": "Orgua",
+	"name": "orgua",
 	"description": "Servidor de Musica Oruga",
 	"version": "1.0.0",
 	"contributors": [
@@ -16,22 +16,15 @@
 		}
 	],
 	"bin": {
-		"Oruga": "./Oruga.js"
+		"oruga": "./Oruga.js"
 	},
 	"scripts": {
-		"start": "node ./Oruga.js"
+		"start": "node ./Oruga.js",
+		"preinstall": "npm install lib/*"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/NickCis/Oruga"
 	},
-	"dependencies": {
-		"OrugaServer": "x",
-		"orugaIndexeador": "x"
-	},
-	"bundledDependecies": [
-		"OrugaServer",
-		"orugaIndexeador"
-	],
 	"license": "Hay que verla"
 }

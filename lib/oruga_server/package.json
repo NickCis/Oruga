@@ -1,18 +1,15 @@
 {
-	"name": "orugaDummy",
-	"description": "Plugin dummy para oruga",
+	"name": "oruga_server",
+	"description": "Servidor de Oruga",
 	"version": "1.0.0",
 	"author": "Nickcis https://github.com/NickCis/",
-	"bin": {
-		"orugaDummy": "./dummy"
-	},
-	"main": "dummy.js",
+	"main": "index",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/NickCis/Oruga"
 	},
 	"dependencies": {
-		"OrugaServer": "x"
+		"express": "3.x"
 	},
 	"license": "Hay que verla"
 }

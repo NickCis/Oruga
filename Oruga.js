@@ -1,10 +1,10 @@
 var path = require('path'),
-	OrugaServer = require("OrugaServer").OrugaServer,
-	server = new OrugaServer({
+	orugaServer = require("oruga_server").OrugaServer,
+	server = new orugaServer({
 		staticFolder: path.join(__dirname, 'static'),
 		pluginList: [
 			path.join(__dirname, 'plugins')+"/*",
-			{ name: "dummy", path: "orugaDummy"}
+			{ name: "dummy", path: "oruga_dummy"}
 		]
 	});
 
