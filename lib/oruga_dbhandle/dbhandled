@@ -4,7 +4,7 @@ use strict;
 use lib "./";
 use CGI;
 use DBI;
-use Objdb::CVR;
+use CVR;
 use Config::IniFiles ();
 use POSIX qw(strftime);
 use Data::Dumper;
