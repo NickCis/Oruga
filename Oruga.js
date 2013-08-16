@@ -5,6 +5,7 @@ var path = require('path'),
 		pluginList: [
 			//path.join(__dirname, 'node_modules')+"/*",
 			{ name: "dummy", path: "oruga_dummy"},
+			{ name: "dbhandle", path: "oruga_dbhandle"},
 			{ name: "indexeador", path: "oruga_indexeador"}
 		]
 	});
