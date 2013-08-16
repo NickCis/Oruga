@@ -1,0 +1,30 @@
+{
+	"name": "orgua",
+	"description": "Servidor de Musica Oruga",
+	"version": "1.0.0",
+	"contributors": [
+		{
+			"name": "smisuraca"
+		},{
+			"name": "ncisco",
+			"github": "nickcis"
+		},{
+			"name": "nicodato",
+			"github": "nicodato"
+		},{
+			"name": "nsuja"
+		}
+	],
+	"bin": {
+		"oruga": "./Oruga.js"
+	},
+	"scripts": {
+		"start": "node ./Oruga.js",
+		"preinstall": "npm install lib/*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/NickCis/Oruga"
+	},
+	"license": "Hay que verla"
+}

@@ -1,0 +1,23 @@
+#! /usr/bin/python2
+import json
+import urlparse
+import time
+#import sys
+
+while 1:
+    input = raw_input()
+    params = input.split(":");
+    if len(params) < 3:
+        continue
+
+    ret = {
+        'id': params[0],
+        'error': 0,
+        'error_message': ''
+    }
+    data = urlparse.parse_qsl(params[2], True)
+    for key, value in data:
+        ret[key] = value
+
+    print json.dumps(ret)
+    #sys.stdout.flush()

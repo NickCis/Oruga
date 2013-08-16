@@ -1,0 +1,15 @@
+{
+	"name": "oruga_dbhandle",
+	"description": "Dbhandle para el oruga",
+	"version": "1.0.0",
+	"author": "smisuraca",
+	"bin": {
+		"oruga_dbhandle": "dbhandled"
+	},
+	"main": "./dbhandle.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/NickCis/Oruga"
+	},
+	"license": "Hay que verla"
+}

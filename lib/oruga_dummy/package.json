@@ -1,0 +1,15 @@
+{
+	"name": "oruga_dummy",
+	"description": "Plugin dummy para oruga",
+	"version": "1.0.0",
+	"author": "Nickcis https://github.com/NickCis/",
+	"bin": {
+		"oruga_dummy": "./dummy"
+	},
+	"main": "dummy.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/NickCis/Oruga"
+	},
+	"license": "Hay que verla"
+}

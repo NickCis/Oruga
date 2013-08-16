@@ -1,17 +1,12 @@
-var DbHandle = require('./plugins/dbhandle/DbHandle'),
-	db = new DbHandle();
+var path = require('path'),
+	orugaServer = require("oruga_server").OrugaServer,
+	server = new orugaServer({
+		staticFolder: path.join(__dirname, 'static'),
+		pluginList: [
+			//path.join(__dirname, 'node_modules')+"/*",
+			{ name: "dummy", path: "oruga_dummy"},
+			{ name: "indexeador", path: "oruga_indexeador"}
+		]
+	});
 
-
-db.run();
-
-db.sendMessage("asdasd", "asdasd", function(error, Json){
-	console.log('mensaje 1');
-	console.log("Error: "+error);
-	console.log(Json);
-});
-
-db.sendMessage("bbbbbbbbbbbbb", "asdasd", function(error, Json){
-	console.log('mensaje 2');
-	console.log("Error: "+error);
-	console.log(Json);
-});
+server.run();
