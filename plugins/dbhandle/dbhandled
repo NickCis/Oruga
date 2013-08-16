@@ -1,8 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
-use TWS::Common::Events;
-use TWS::Common::Daemon;
+use lib "./";
 use CGI;
 use DBI;
 use Objdb::CVR;
@@ -23,12 +22,10 @@ $EVENTS{"getArtists"} = \&db_get_artists;
 $SIG{TERM} = $SIG{QUIT} = $SIG{INT}  = \&STOP;
 $SIG{CHLD} = \&handle_signal_child;
 $SIG{__DIE__} = sub {
-	TWS::Common::Daemon::Log("warning", @_);
 	STOP();
 };
 
 if(START() != 0) {
-	TWS::Common::Daemon::Log("error", "START fallo");
 	exit 1;
 }
 
@@ -67,7 +64,6 @@ while(<STDIN>) {
 	
 
 
-#TWS::Common::Daemon::Log("error", "main - check_folder_to_import");
 
 	sleep(1);
 } 
@@ -77,7 +73,6 @@ STOP();
 sub START 
 {
 	$dbh = DBI->connect('dbi:mysql:oruga:localhost', 'root', 'oruga') || die $DBI::errstr;
-#	TWS::Common::Daemon::Start("hotfolderd");
 
 	return 0;        
 }
@@ -87,9 +82,7 @@ sub STOP
 	my $signal = shift;
 	$dbh->disconnect;
 
-	TWS::Common::Daemon::Log("warning", "STOP by signal $signal");
 	exit(0);
-#	TWS::Common::Daemon::Stop();
 }
 
 sub parse_msg
