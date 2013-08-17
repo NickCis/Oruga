@@ -1,6 +1,8 @@
+*.pyc
 *.o
 *~
 plugins/indexeador/indexeador
 .*.sw*
-
 node_modules
+compile
+static/js/templates.js
