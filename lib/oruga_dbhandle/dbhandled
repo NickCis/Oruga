@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+$|++;
 
 use strict;
 use lib "./";
@@ -25,7 +26,9 @@ $SIG{__DIE__} = sub {
 	STOP();
 };
 
+print STDERR $$.":Iniciando Dbhandle";
 if(START() != 0) {
+	print STDERR "Fallo al iniciar";
 	exit 1;
 }
 
