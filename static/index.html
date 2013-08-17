@@ -1,9 +1,21 @@
 <html>
-<head>
-<title>All knee down to Oruga!</title>
-<script type="text/javascript" src="/static/js/templates.js"></script>
-</head>
-<body>
-<h1> All knee down to Oruga!</h1>
-</body>
+	<head>
+		<title>All knee down to Oruga!</title>
+	</head>
+	<body>
+		<script type="text/javascript" src="/static/js/OWidget.js"></script>
+		<script type="text/javascript" src="/static/js/Ajax.js"></script>
+		<script type="text/javascript" src="/static/js/OTemplate.js"></script>
+		<script type="text/javascript" src="/static/js/widgets/Main.js"></script>
+		<script type="text/javascript" src="/static/js/templates.js"></script>
+
+		<script type="text/javascript">
+			(function(){
+				 window.addEventListener('load', function(){
+					 var orugaUi = new UiMain();
+					 document.body.appendChild(orugaUi._d);
+				 }, false);
+			 })();
+		</script>
+	</body>
 </html>

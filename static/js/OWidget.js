@@ -1,11 +1,11 @@
-/** $O -> Objetos de Oruga
- * @param config -> Object, defaultea a un Hash vacio
- */
-function $O(config){
-	this._handlers = {};
-	this.c = config || {};
-};
 (function(){
+	/** $O -> Objetos de Oruga
+	 * @param config -> Object, defaultea a un Hash vacio
+	 */
+	function $O(config){
+		this._handlers = {};
+		this.c = config || {};
+	};
 	/** Para agregar funciones de uso general
 	 */
 	$O.f = {
@@ -24,6 +24,9 @@ function $O(config){
 					obj = $O.prototype.f.xD(obj, arguments[i]);
 			}
 			return obj;
+		},
+		notImplemented: function(name){
+			console.log("ERROR: "+this.constructor.name+"."+name+" no implementado");
 		}
 	};
 	
@@ -80,4 +83,5 @@ function $O(config){
 		},
 		f : $O.f
 	};
+	window.$O = $O;
 })();
