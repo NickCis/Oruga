@@ -21,13 +21,14 @@
 	"scripts": {
 		"start": "node ./Oruga.js",
 		"preinstall": "npm install lib/oruga_*",
-		"install": "./node_modules/dot/bin/dot-packer -d ./compile -s ./templates -p static/js/templates.js"
+		"install": "./node_modules/dot/bin/dot-packer -d ./compile -s ./src/templates -p static/js/templates.js; ./node_modules/node-sass/bin/node-sass --include-path ./src/scss/bootstrap/ ./src/scss/bootstrap/bootstrap.scss ./static/css/bootstrap.css; ./node_modules/node-sass/bin/node-sass --include-path ./src/scss/bootstrap/ ./src/scss/bootstrap/responsive.scss ./static/css/bootstrap-responsive.css"
 	},
 	"dependencies": {
 		"dot": "*",
 		"commander": "*",
 		"mkdirp": "*",
-		"uglify-js":"*"
+		"uglify-js":"*",
+		"node-sass":"*"
 	},
 	"repository": {
 		"type": "git",
