@@ -6,7 +6,7 @@ use lib "./";
 use CGI;
 use DBI;
 use CVR;
-use Config::IniFiles ();
+#use Config::IniFiles ();
 use POSIX qw(strftime);
 use Data::Dumper;
 #use CGI::App::Config;
