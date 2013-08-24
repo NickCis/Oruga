@@ -46,3 +46,12 @@ body {
 code {
 	font-size: 80%;
 }
+
+.nav-collapse {
+	@include single-transition(height, 0.5s, ease-out, 0);
+}
+
+.no-show {
+	visibility: hidden;
+	display: none;
+}
