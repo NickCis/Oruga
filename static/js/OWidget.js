@@ -27,6 +27,14 @@
 		},
 		notImplemented: function(name){
 			console.log("ERROR: "+this.constructor.name+"."+name+" no implementado");
+		},
+		addArgs: function(cb, args){
+			args = args.slice(0);
+			return function(){
+				for(var i=arguments.length-1; i >= 0; i--)
+					args.unshift(arguments[i]);
+				cb.apply(this, args);
+			};
 		}
 	};
 	

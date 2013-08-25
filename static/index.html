@@ -16,12 +16,15 @@
 		<script type="text/javascript" src="/static/js/Ajax.js"></script>
 		<script type="text/javascript" src="/static/js/OTemplate.js"></script>
 		<script type="text/javascript" src="/static/js/widgets/Main.js"></script>
+		<script type="text/javascript" src="/static/js/widgets/Search.js"></script>
 		<script type="text/javascript" src="/static/js/templates.js"></script>
+		<script type="text/javascript" src="/static/js/OrugaApi.js"></script>
 
 		<script type="text/javascript">
 			(function(){
 				 window.addEventListener('load', function(){
-					 var orugaUi = new UiMain();
+					 var oruga = new OrugaApiTest(),
+						 orugaUi = new UiMain({oruga: oruga});
 					 document.body.appendChild(orugaUi._d);
 				 }, false);
 			 })();

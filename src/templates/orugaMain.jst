@@ -12,9 +12,9 @@
         <a class="brand" href="#">Oruga</a>
         <div class="nav-collapse collapse">
           <ul class="nav main-nav-ul">
-            <li class="active"><a href="" data-target="main-body-div-home">Home</a></li>
-            <li><a href="" data-target="main-body-div-search">Busqueda</a></li>
-            <li><a href="" data-target="main-body-div-config">Configuracion</a></li>
+            <li class="main-nav-ul-li active main-body-div-home-li"><a href="" data-target="main-body-div-home">Home</a></li>
+            <li class="main-nav-ul-li main-body-div-search-li"><a href="" data-target="main-body-div-search">Busqueda</a></li>
+            <li class="main-nav-ul-li main-body-div-config-li"><a href="" data-target="main-body-div-config">Configuracion</a></li>
             <!--li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -29,11 +29,11 @@
             </li-->
           </ul>
           <form class="navbar-form pull-right main-search-form">
-            <input type="text" placeholder="Buscar" class="span2">
-            <select class="span2">
-              <option>Cancion</option>
-              <option>Artista</option>
-              <option>Album</option>
+            <input type="text" name="keyword" placeholder="Buscar" class="span2">
+            <select name="type" class="span2">
+              <option value="getSongs">Cancion</option>
+              <option value="getAlbums">Album</option>
+              <option value="getArtists">Artista</option>
             </select>
             <button class="btn" type="submit">Buscar</button>
           </form>
@@ -51,12 +51,12 @@
 		<p class="lead">Pin a fixed-height footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS. A fixed navbar has been added within <code>#wrap</code> with <code>padding-top: 60px;</code> on the <code>.container</code>.</p>
 		<p>Back to <a href="./sticky-footer.html">the sticky footer</a> minus the navbar.</p>
 	</div>
-	<div class='main-body-div main-body-div-search no-show'>
+	<div class='main-body-div main-body-div-search'>
 		<div class="page-header">
 		  <h1>Busqueda</h1>
 		</div>
 	</div>
-	<div class='main-body-div main-body-div-config no-show'>
+	<div class='main-body-div main-body-div-config'>
 		<div class="page-header">
 		  <h1>Configuraci&oacute;n</h1>
 		</div>

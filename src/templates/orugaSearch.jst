@@ -1,0 +1,33 @@
+<thead>
+	<tr>
+		<th></th>
+		<th>#</th>
+		{{? it.type == "getSongs" }}
+			<th>Nombre</th>
+			<th>Duraci&oacute;n</th>
+		{{?}}
+		{{? it.type == "getSongs" || it.type == "getAlbums"  }}
+		<th>Album</th>
+		<th>A~no</th>
+		{{?}}
+		<th>Artista</th>
+	</tr>
+</thead>
+<tbody>
+	{{~it :value}}
+		<tr>
+			<td><i class='icon-plus-sign' data-event="add" data-type="{{=it.type}}" data-value='{{=JSON.stringify(value).replace(/'/g, "\'")}}'></i></td>
+			<td>{{=value.id}}</td>
+			<td>{{=value.name}}</td>
+			{{? it.type == "getSongs" }}
+				<td>{{=value.length}}</td>
+				<td>{{=value.album.name}}</td>
+				<td>{{=value.album.year}}</td>
+				<td>{{=value.album.artist.name}}</td>
+			{{?? it.type == "getAlbums"}}
+				<td>{{=value.year}}</td>
+				<td>{{=value.artist.name}}</td>
+			{{?}}
+		</tr>
+	{{~}}
+</tbody>

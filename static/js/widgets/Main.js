@@ -1,6 +1,7 @@
 (function(){
 	function UiMain(config){
 		$Ui.call(this, config);
+		(this.c.defaultDiv === undefined) && (this.c.defaultDiv = 'main-body-div-home');
 		this.basicLayout();
 	};
 	UiMain.prototype = $O.f.xD($Ui.prototype, {
@@ -14,11 +15,26 @@
 			});
 
 			this.getElesByClass('main-search-form', function(ele){
-				ele.addEventListener('submit', this.search.bind(this), false);
+				ele.addEventListener('submit', this.onNavbarFormSubmit.bind(this), false);
 			});
 
 			this.getElesByClass('main-nav-ul', function(ele){
-				ele.addEventListener('click', this.toggleDivBody.bind(this), false);
+				ele.addEventListener('click', this.onToggleDivBody.bind(this), false);
+			});
+			this.getElesByClass('main-body-div-search', function(ele){
+				this.search = new UiSearch({
+					container: ele,
+					oruga: this.c.oruga
+				});
+				this.search.addEventListener('add', function(){
+					console.log(arguments);
+				}, false);
+			});
+			this.getElesByClass('main-body-div', function(ele){
+				if(ele.classList.contains(this.c.defaultDiv))
+					ele.classList.remove("no-show");
+				else
+					ele.classList.add("no-show");
 			});
 		},
 		toggleView: function(){
@@ -26,22 +42,20 @@
 				ele.style.height = (!ele.style.height || parseInt(ele.style.height, 10) == 0) ? "auto" : "0px";
 			});
 		},
-		search: function(event){
+		onToggleDivBody: function(event){
 			event.preventDefault();
-
-
-			return true;
+			var ele = event.target,
+				dataTarget = ele.getAttribute('data-target');
+			this.toggleDivBody(dataTarget);
 		},
-		toggleDivBody: function(event){
-			event.preventDefault();
-			var ele = event.target;
-			this.getElesByClass('main-nav-ul', function(ele){
-				for(var i=0, child, children = ele.children; child = children[i]; i++)
-					child.classList.remove('active');
-			});
-			ele.parentNode.classList.add('active');
 
-			var dataTarget = ele.getAttribute('data-target');
+		toggleDivBody: function(dataTarget){
+			this.getElesByClass('main-nav-ul-li', function(ele){
+				if(ele.classList.contains(dataTarget+'-li'))
+					ele.classList.add("active");
+				else
+					ele.classList.remove("active");
+			});
 
 			this.getElesByClass('main-body-div', function(ele){
 				if(ele.classList.contains(dataTarget))
@@ -52,6 +66,16 @@
 
 
 			return true;
+		},
+		onNavbarFormSubmit: function(event){
+			event.preventDefault();
+			var form = event.target,
+				data = $Ui.f.formSerialize(form);
+
+			this.search.search(data);
+			this.toggleDivBody('main-body-div-search');
+
+			return false;
 		}
 	});
 
