@@ -17,6 +17,8 @@
 		<script type="text/javascript" src="/static/js/OTemplate.js"></script>
 		<script type="text/javascript" src="/static/js/widgets/Main.js"></script>
 		<script type="text/javascript" src="/static/js/widgets/Search.js"></script>
+		<script type="text/javascript" src="/static/js/widgets/SideBar.js"></script>
+		<script type="text/javascript" src="/static/js/widgets/Playlist.js"></script>
 		<script type="text/javascript" src="/static/js/templates.js"></script>
 		<script type="text/javascript" src="/static/js/OrugaApi.js"></script>
 
@@ -25,7 +27,8 @@
 				 window.addEventListener('load', function(){
 					 var oruga = new OrugaApiTest(),
 						 orugaUi = new UiMain({oruga: oruga});
-					 document.body.appendChild(orugaUi._d);
+
+						 document.body.appendChild(orugaUi._d);
 				 }, false);
 			 })();
 		</script>

@@ -1,8 +1,8 @@
 (function(){
-	function UiMain(config){
-		$Ui.call(this, config);
+	function UiMain(config, layout){
+		$Ui.call(this, config, true);
 		(this.c.defaultDiv === undefined) && (this.c.defaultDiv = 'main-body-div-home');
-		this.basicLayout();
+		(layout) || (this.basicLayout());
 	};
 	UiMain.prototype = $O.f.xD($Ui.prototype, {
 		constructor: UiMain,
@@ -26,9 +26,10 @@
 					container: ele,
 					oruga: this.c.oruga
 				});
-				this.search.addEventListener('add', function(){
-					console.log(arguments);
-				}, false);
+				this.search.addEventListener('add', (function(data){
+					this.sideBar.open();
+					this.createPlaylist.add(data);
+				}).bind(this), false);
 			});
 			this.getElesByClass('main-body-div', function(ele){
 				if(ele.classList.contains(this.c.defaultDiv))
@@ -36,6 +37,29 @@
 				else
 					ele.classList.add("no-show");
 			});
+			this.sideBar = new UiSideBar();
+			document.body.appendChild(this.sideBar._d);
+			this.sideBar.close();
+
+			this.createPlaylist = new UiPlaylistCreator();
+			this.sideBar._d.appendChild(this.createPlaylist._d);
+			this.sideBar.addEventListener('open', this.onEventSideBar.bind(this));
+			this.sideBar.addEventListener('close', this.onEventSideBar.bind(this));
+			this.sideBar.closeBind = this.sideBar.close.bind(this.sideBar);
+		},
+		onEventSideBar: function(event){
+			switch(event.event){
+				case 'open':
+					this.getElesByClass('main-content', function(ele){
+						setTimeout((function(){ele.addEventListener('click', this.sideBar.closeBind);}).bind(this), 100);
+					});
+					break;
+				case 'close':
+					this.getElesByClass('main-content', function(ele){
+						ele.removeEventListener('click', this.sideBar.closeBind);
+					});
+					break;
+			}
 		},
 		toggleView: function(){
 			this.getElesByClass('nav-collapse', function(ele){

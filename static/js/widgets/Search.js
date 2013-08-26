@@ -1,7 +1,7 @@
 (function(){
-	function UiSearch(config){
-		$Ui.call(this, config);
-		this.basicLayout();
+	function UiSearch(config, layout){
+		$Ui.call(this, config, true);
+		(layout) || (this.basicLayout());
 	};
 	UiSearch.prototype = $O.f.xD($Ui.prototype, {
 		constructor: UiSearch,
@@ -9,12 +9,8 @@
 			var form = document.createElement('form'),
 				table = document.createElement('table');
 
-
-			for(var i=0, c, classes = ['table', 'table-condensed', 'table-striped', 'search-table']; c = classes[i]; i++)
-				table.classList.add(c);
-
-			for(var i=0, c, classes = ['form-horizontal', 'search-form']; c = classes[i]; i++)
-				form.classList.add(c);
+			$Ui.f.addClass(table, ['table', 'table-condensed', 'table-striped', 'search-table']);
+			$Ui.f.addClass(form, ['form-horizontal', 'search-form']);
 
 			form.innerHTML = window.render.orugaSearchForm();
 			form.addEventListener('submit', this.onSubmitSearch.bind(this), false);
