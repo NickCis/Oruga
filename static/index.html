@@ -9,19 +9,26 @@
 
 		<link href="/static/css/bootstrap.css" rel="stylesheet">
 		<link href="/static/css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="/static/css/oruga.css" rel="stylesheet">
 	</head>
 	<body>
 		<script type="text/javascript" src="/static/js/OWidget.js"></script>
 		<script type="text/javascript" src="/static/js/Ajax.js"></script>
 		<script type="text/javascript" src="/static/js/OTemplate.js"></script>
 		<script type="text/javascript" src="/static/js/widgets/Main.js"></script>
+		<script type="text/javascript" src="/static/js/widgets/Search.js"></script>
+		<script type="text/javascript" src="/static/js/widgets/SideBar.js"></script>
+		<script type="text/javascript" src="/static/js/widgets/Playlist.js"></script>
 		<script type="text/javascript" src="/static/js/templates.js"></script>
+		<script type="text/javascript" src="/static/js/OrugaApi.js"></script>
 
 		<script type="text/javascript">
 			(function(){
 				 window.addEventListener('load', function(){
-					 var orugaUi = new UiMain();
-					 document.body.appendChild(orugaUi._d);
+					 var oruga = new OrugaApiTest(),
+						 orugaUi = new UiMain({oruga: oruga});
+
+						 document.body.appendChild(orugaUi._d);
 				 }, false);
 			 })();
 		</script>

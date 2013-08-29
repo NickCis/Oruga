@@ -6,5 +6,4 @@ plugins/indexeador/indexeador
 node_modules
 compile
 static/js/templates.js
-static/css/bootstrap.css
-static/css/bootstrap-responsive.css
+static/css

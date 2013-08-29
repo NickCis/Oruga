@@ -5,33 +5,164 @@
 	OrugaApi.prototype = $O.f.xD($O.prototype, {
 		constructor: OrugaApi,
 		/* Habria que definir todos los metodos */
-		getArtist: function(){$O.f.notImplemented.call(this, "getArtist");},
-		getAlbum: function(){$O.f.notImplemented.call(this, "getAlbum");},
-		getSong: function(){$O.f.notImplemented.call(this, "getSong");},
-		getPlaylist: function(){$O.f.notImplemented.call(this, "getPlaylist");},
-		getCurrent: function(){$O.f.notImplemented.call(this, "getCurrent");},
-		play: function(){$O.f.notImplemented.call(this, "play");},
-		stop: function(){$O.f.notImplemented.call(this, "stop");},
-		pause: function(){$O.f.notImplemented.call(this, "pause");},
-		addSongToPlaylist: function(){$O.f.notImplemented.call(this, "addSongToPlaylist");},
-		shuffle: function(){$O.f.notImplemented.call(this, "shuffle");},
-		loop: function(){$O.f.notImplemented.call(this, "loop");},
-		gotoElapsed: function(){$O.f.notImplemented.call(this, "gotoElapsed");},
-		setVolume: function(){$O.f.notImplemented.call(this, "setVolume");}
+		/* Todas las cb(error, Json) */
+		getSongs: function(args, cb){$O.f.notImplemented.call(this, "getSong");},
+		getAlbums: function(args, cb){$O.f.notImplemented.call(this, "getAlbum");},
+		getArtists: function(args, cb){$O.f.notImplemented.call(this, "getArtist");},
+		getPlaylist: function(args, cb){$O.f.notImplemented.call(this, "getPlaylist");},
+		getCurrent: function(args, cb){$O.f.notImplemented.call(this, "getCurrent");},
+		play: function(args, cb){$O.f.notImplemented.call(this, "play");},
+		stop: function(args, cb){$O.f.notImplemented.call(this, "stop");},
+		pause: function(args, cb){$O.f.notImplemented.call(this, "pause");},
+		addSongToPlaylist: function(args, cb){$O.f.notImplemented.call(this, "addSongToPlaylist");},
+		shuffle: function(args, cb){$O.f.notImplemented.call(this, "shuffle");},
+		loop: function(args, cb){$O.f.notImplemented.call(this, "loop");},
+		gotoElapsed: function(args, cb){$O.f.notImplemented.call(this, "gotoElapsed");},
+		setVolume: function(args, cb){$O.f.notImplemented.call(this, "setVolume");}
 	});
+
+	window.OrugaApi = OrugaApi;
 })();
 
-function OrugaApiTest(config){
-	OrugaApi.call(this, config);
-}
-
 (function(){
+	function OrugaApiTest(config){
+		OrugaApi.call(this, config);
+	}
 	OrugaApiTest.prototype = $O.f.xD(OrugaApi.prototype, {
 		constructor: OrugaApiTest,
 		/* Habria que definir todos los metodos */
-		getArtist: function(){},
-		getAlbum: function(){},
-		getSong: function(){},
+		getSongs: function(args, cb){
+			cb(false, [{
+				id: 1,
+				name: "pepe",
+				path: "/foo/bar/pepe.mp3",
+				length: 300,
+				album: {
+					id: 1,
+					name: "pepe album",
+					pathimg: "img loca",
+					year: 2010,
+					artist: {
+						id: 1,
+						name: "papa"
+					}
+				}
+			},{
+				id: 2,
+				name: "aaaaaaaaaa",
+				path: "/foo/bar/aaaaaaaaa.mp3",
+				length: 450,
+				album: {
+					id: 2,
+					name: "adasddada",
+					pathimg: "imgxxxxxxxxx",
+					year: 1902,
+					artist: {
+						id: 8,
+						name: "xxxxxxxxxx"
+					}
+				}
+			},{
+				id: 3,
+				name: "adwqe",
+				path: "/fffffff/aaa/cc",
+				length: 12356,
+				album: {
+					id: 8,
+					name: "asdjhajhvhjv",
+					pathimg: "noooooo",
+					year: 2012,
+					artist: {
+						id: 19,
+						name: "artista"
+					}
+				}
+			},{
+				id: 1,
+				name: "pepe",
+				path: "/foo/bar/pepe.mp3",
+				length: 300,
+				album: {
+					id: 1,
+					name: "pepe album",
+					pathimg: "img loca",
+					year: 2010,
+					artist: {
+						id: 1,
+						name: "papa"
+					}
+				}
+			},{
+				id: 1,
+				name: "pepe",
+				path: "/foo/bar/pepe.mp3",
+				length: 300,
+				album: {
+					id: 1,
+					name: "pepe album",
+					pathimg: "img loca",
+					year: 2010,
+					artist: {
+						id: 1,
+						name: "papa"
+					}
+				}
+			}]);
+		},
+		getAlbums: function(args, cb){
+			cb(false, [{
+				id: 1,
+				name: "pepe album",
+				pathimg: "img loca",
+				year: 2010,
+				artist: {
+					id: 1,
+					name: "papa"
+				}
+			},{
+				id: 8,
+				name: "asdjhajhvhjv",
+				pathimg: "noooooo",
+				year: 2012,
+				artist: {
+					id: 19,
+					name: "artista"
+				}
+			},{
+				id: 2,
+				name: "adasddada",
+				pathimg: "imgxxxxxxxxx",
+				year: 1902,
+				artist: {
+					id: 8,
+					name: "xxxxxxxxxx"
+				}
+			},{
+				id: 2,
+				name: "adasddada",
+				pathimg: "imgxxxxxxxxx",
+				year: 1902,
+				artist: {
+					id: 8,
+					name: "xxxxxxxxxx"
+				}
+			}]);
+		},
+		getArtists: function(args, cb){
+			cb(false, [{
+				id: 100,
+				name: "asdasd"
+			},{
+				id:101,
+				name: "hola"
+			},{
+				id: 102,
+				name: "pepeeee"
+			},{
+				id: 103,
+				name: "aaaaaaaaaaaaaaaaaaa"
+			}]);
+		},
 		getPlaylist: function(){},
 		getCurrent: function(){},
 		play: function(){},
@@ -43,4 +174,5 @@ function OrugaApiTest(config){
 		gotoElapsed: function(){},
 		setVolume: function(){}
 	});
+	window.OrugaApiTest = OrugaApiTest;
 })();
