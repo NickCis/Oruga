@@ -32,82 +32,16 @@
 		constructor: OrugaApiTest,
 		/* Habria que definir todos los metodos */
 		getSongs: function(args, cb){
-			cb(false, [{
-				id: 1,
-				name: "pepe",
-				path: "/foo/bar/pepe.mp3",
-				length: 300,
-				album: {
-					id: 1,
-					name: "pepe album",
-					pathimg: "img loca",
-					year: 2010,
-					artist: {
-						id: 1,
-						name: "papa"
-					}
-				}
-			},{
-				id: 2,
-				name: "aaaaaaaaaa",
-				path: "/foo/bar/aaaaaaaaa.mp3",
-				length: 450,
-				album: {
-					id: 2,
-					name: "adasddada",
-					pathimg: "imgxxxxxxxxx",
-					year: 1902,
-					artist: {
-						id: 8,
-						name: "xxxxxxxxxx"
-					}
-				}
-			},{
-				id: 3,
-				name: "adwqe",
-				path: "/fffffff/aaa/cc",
-				length: 12356,
-				album: {
-					id: 8,
-					name: "asdjhajhvhjv",
-					pathimg: "noooooo",
-					year: 2012,
-					artist: {
-						id: 19,
-						name: "artista"
-					}
-				}
-			},{
-				id: 1,
-				name: "pepe",
-				path: "/foo/bar/pepe.mp3",
-				length: 300,
-				album: {
-					id: 1,
-					name: "pepe album",
-					pathimg: "img loca",
-					year: 2010,
-					artist: {
-						id: 1,
-						name: "papa"
-					}
-				}
-			},{
-				id: 1,
-				name: "pepe",
-				path: "/foo/bar/pepe.mp3",
-				length: 300,
-				album: {
-					id: 1,
-					name: "pepe album",
-					pathimg: "img loca",
-					year: 2010,
-					artist: {
-						id: 1,
-						name: "papa"
-					}
-				}
-			}]);
+			console.log(args);
+			var c = ({
+				success: function(response) {
+					var Json = JSON.parse(response);
+					console.log(Json);
+					cb(false, Json.response);
+				},
+				data :"limitCount=5"
+			});
+			var query = new Ajax("/plugins/dbhandle/getSongs/", c);
 		},
 		getAlbums: function(args, cb){
 			cb(false, [{

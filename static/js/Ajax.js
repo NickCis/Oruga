@@ -37,7 +37,7 @@
 				this.xhr = new ActiveXObject("Msxml2.XMLHTTP");
 			}
 		}
-		this.xhr.onreadystate = this.onReadyState.bind(this);
+		this.xhr.onreadystatechange = this.onReadyState.bind(this);
 		this.xhr.open(this.c.method, this.url+ ( ( this.c.data && this.c.method == "GET")?"?"+this.objToString(this.c.data):''), true);
 		this.c.startLoader.call(this);
 		this.requestTimeout = setTimeout(this.onTimeout.bind(this), this.c.timeout);
@@ -53,9 +53,11 @@
 		onReadyState: function(){
 			clearTimeout(this.requestTimeout);
 			this.emit('readystate', this.xhr.responseText);
-			if(this.xhr.status != 200)
-				return this.c.failure.call(this, this.xhr.status, this.xhr.responseText, xhr);
-			return this.c.success.call(this, this.xhr.responseText, xhr);
+			if(this.xhr.readyState === 4){
+				if(this.xhr.status == 200)
+					return this.c.success.call(this, this.xhr.responseText, this.xhr);
+				return this.c.failure.call(this, this.xhr.status, this.xhr.responseText, this.xhr);
+			}
 		},
 		onTimeout: function(){
 			this.emit('timeout');

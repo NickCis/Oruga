@@ -38,7 +38,7 @@ while(<STDIN>) {
 	my $response;
 	$response->{'error'} = 0;
 	$response->{'error_text'} = "";
-	$response->{'reponse'} = "";
+	$response->{'response'} = "";
 	$response->{'id'} = "";
 
 	if(!$event) {
@@ -54,7 +54,7 @@ while(<STDIN>) {
 				$response->{'error_text'} = "Fallo la peticion";
 				print STDERR "Evento $event->{event} fallo\n";
 			} else {
-				$response->{'reponse'} = $ret;
+				$response->{'response'} = $ret;
 			}
 		} else {
 			$response->{'error_text'} = "Evento $event->{event} inexistente\n";
@@ -126,10 +126,12 @@ sub db_get_songs
 	my $where = "1";
 	$where .= " AND songs.id = ".$params->{'param'}->{'idSong'}->[0] if($params->{'param'}->{'idSong'});
 	$where .= " AND songs.idalbum = ".$params->{'param'}->{'idAlbum'}->[0] if($params->{'param'}->{'idAlbum'});
+	$where .= " AND MATCH(songs.name) AGAINST('".$params->{'param'}->{'wordSong'}->[0]."' IN BOOLEAN MODE)" if($params->{'param'}->{'wordSong'});
+
 	$where .= " AND songs.name like '%".$params->{'param'}->{'wordSong'}->[0]."%'" if($params->{'param'}->{'wordSong'});
 	$where .= " AND songsalbum.idartist = ".$params->{'param'}->{'idArtist'}->[0] if($params->{'param'}->{'idArtist'});
-	$where .= " AND songsalbum.name like '%".$params->{'param'}->{'wordAlbum'}->[0]."%'" if($params->{'param'}->{'wordAlbum'});
-	$where .= " AND songsalbumartist.name like '%".$params->{'param'}->{'wordArtist'}->[0]."%'" if($params->{'param'}->{'wordArtist'});
+	$where .= " AND MATCH(songsalbum.name) AGAINST('".$params->{'param'}->{'wordAlbum'}->[0]."' IN BOOLEAN MODE)" if($params->{'param'}->{'wordAlbum'});
+	$where .= " AND MATCH(songsalbumartist.name) AGAINST('".$params->{'param'}->{'wordArtist'}->[0]."' IN BOOLEAN MODE)" if($params->{'param'}->{'wordArtist'});
 	
 	$obj->where($where);
 	$obj->limit_from(($params->{'param'}->{'limitFrom'}->[0]  > 0) ? $params->{'param'}->{'limitFrom'}->[0] : 0);
@@ -157,8 +159,8 @@ sub db_get_albums
 	my $where = "1";
 	$where .= " AND albums.id = ".$params->{'param'}->{'idAlbum'}->[0] if($params->{'param'}->{'idAlbum'});
 	$where .= " AND albums.idartist = ".$params->{'param'}->{'idArtist'}->[0] if($params->{'param'}->{'idArtist'});
-	$where .= " AND albums.name like '%".$params->{'param'}->{'wordAlbum'}->[0]."%'" if($params->{'param'}->{'wordAlbum'});
-	$where .= " AND albumsartist.name like '%".$params->{'param'}->{'wordArtist'}->[0]."%'" if($params->{'param'}->{'wordArtist'});
+	$where .= " AND MATCH(albums.name) AGAINST('".$params->{'param'}->{'wordAlbum'}->[0]."' IN BOOLEAN MODE)" if($params->{'param'}->{'wordAlbum'});
+	$where .= " AND MATCH(albumsartist.name) AGAINST('".$params->{'param'}->{'wordArtist'}->[0]."' IN BOOLEAN MODE)" if($params->{'param'}->{'wordArtist'});
 	
 	$obj->where($where);
 	$obj->limit_from(($params->{'param'}->{'limitFrom'}->[0]  > 0) ? $params->{'param'}->{'limitFrom'}->[0] : 0);
@@ -183,7 +185,7 @@ sub db_get_artists
 
 	my $where = "1";
 	$where .= " AND artists.id = ".$params->{'param'}->{'idArtist'}->[0] if($params->{'param'}->{'idArtist'});
-	$where .= " AND artists.name like '%".$params->{'param'}->{'wordArtist'}->[0]."%'" if($params->{'param'}->{'wordArtist'});
+	$where .= " AND MATCH(artists.name) AGAINST('".$params->{'param'}->{'wordArtist'}->[0]."' IN BOOLEAN MODE)" if($params->{'param'}->{'wordArtist'});
 	
 	$obj->where($where);
 	$obj->limit_from(($params->{'param'}->{'limitFrom'}->[0]  > 0) ? $params->{'param'}->{'limitFrom'}->[0] : 0);
