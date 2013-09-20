@@ -20,7 +20,16 @@
 	},
 	"scripts": {
 		"start": "node ./Oruga.js",
-		"preinstall": "npm install lib/*"
+		"preinstall": "npm install lib/oruga_*",
+		"install": "./node_modules/dot/bin/dot-packer -d ./compile -s ./src/templates -p static/js/templates.js; ./compiler.js"
+	},
+	"dependencies": {
+		"dot": "*",
+		"commander": "*",
+		"mkdirp": "*",
+		"uglify-js":"*",
+		"node-sass":"*",
+		"mkdirp":"*"
 	},
 	"repository": {
 		"type": "git",
